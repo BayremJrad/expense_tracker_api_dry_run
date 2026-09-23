@@ -1,0 +1,19 @@
+$kind: http-request
+name: Submit Claim
+order: 1000
+description: |-
+  Submits a draft claim for approval, transitioning it from `draft` → `submitted` (BR-09, BR-23).
+  
+  **Business rules enforced on submission:**
+  - Claim must be in draft status (BR-23)
+  - Claim must contain at least one expense (BR-21)
+  - Any expense requiring a receipt (amount > category threshold, or Client Entertainment) must have at least one receipt attached (BR-19, BR-20)
+  - No expense in the claim may be older than 90 days (BR-18)
+  - Status change is recorded with actor and timestamp (BR-29)
+method: POST
+url: '{{baseUrl}}/claims/:claimId/submit'
+pathVariables:
+  - key: claimId
+    value: clm_001
+    description: The unique identifier of the claim to submit.
+examples: './.resources/Submit Claim.resources/examples/'

@@ -1,0 +1,54 @@
+$kind: http-example
+name: '200 OK - Claims list'
+request:
+  method: GET
+  url: '{{baseUrl}}/claims'
+  headers:
+    - key: Authorization
+      value: 'Bearer {{authToken}}'
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    - key: Content-Type
+      value: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "data": [
+          {
+            "id": "clm_001",
+            "title": "September 2026 - Client site visits",
+            "status": "draft",
+            "totalEur": 187.19,
+            "expenseCount": 2,
+            "ownerId": "usr_123",
+            "createdAt": "2026-09-23T09:00:00Z",
+            "submittedAt": null,
+            "decision": null
+          },
+          {
+            "id": "clm_002",
+            "title": "August 2026 - Travel expenses",
+            "status": "reimbursed",
+            "totalEur": 430.00,
+            "expenseCount": 5,
+            "ownerId": "usr_123",
+            "createdAt": "2026-08-31T17:00:00Z",
+            "submittedAt": "2026-09-01T08:00:00Z",
+            "decision": {
+              "decidedBy": "usr_456",
+              "decidedAt": "2026-09-03T10:00:00Z",
+              "outcome": "approved",
+              "reason": null
+            }
+          }
+        ],
+        "pagination": {
+          "page": 1,
+          "pageSize": 20,
+          "total": 2,
+          "totalPages": 1
+        }
+      }

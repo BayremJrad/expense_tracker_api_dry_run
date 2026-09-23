@@ -1,0 +1,15 @@
+id: 01a0d007-4fd9-7521-baae-86eb16386360
+version: 1
+name: Expense Tracker API
+slug: expense-tracker-api
+enableSession: true
+protocol: http
+port: 4510
+autoRestartOnChange: true
+logging:
+  level: verbose
+  showBody: true
+scenarios:
+  - name: default
+    path: ./default.js
+    default: true

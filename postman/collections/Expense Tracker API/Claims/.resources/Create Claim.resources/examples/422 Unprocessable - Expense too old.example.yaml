@@ -1,0 +1,34 @@
+$kind: http-example
+name: '422 Unprocessable - Expense too old'
+request:
+  method: POST
+  url: '{{baseUrl}}/claims'
+  headers:
+    - key: Authorization
+      value: 'Bearer {{authToken}}'
+    - key: Content-Type
+      value: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "title": "Old expenses claim",
+        "expenseIds": ["exp_old_001"]
+      }
+response:
+  statusCode: 422
+  statusText: Unprocessable Entity
+  headers:
+    - key: Content-Type
+      value: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "error": {
+          "code": "EXPENSE_TOO_OLD",
+          "rule": "BR-18",
+          "message": "Expense 'exp_old_001' was incurred more than 90 days ago and cannot be added to a claim.",
+          "field": "expenseIds"
+        }
+      }

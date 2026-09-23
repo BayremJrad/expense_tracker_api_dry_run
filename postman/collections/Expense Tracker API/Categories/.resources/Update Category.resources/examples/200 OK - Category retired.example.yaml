@@ -1,0 +1,35 @@
+$kind: http-example
+name: '200 OK - Category retired'
+request:
+  method: PATCH
+  url: '{{baseUrl}}/categories/cat_04'
+  headers:
+    - key: Authorization
+      value: 'Bearer {{authToken}}'
+    - key: Content-Type
+      value: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "active": false
+      }
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    - key: Content-Type
+      value: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "id": "cat_04",
+        "name": "Software",
+        "receiptThreshold": 10.00,
+        "requiresReceiptAlways": false,
+        "requiresClientReference": false,
+        "active": false,
+        "retiredAt": "2026-09-23T10:05:00Z",
+        "updatedAt": "2026-09-23T10:05:00Z"
+      }

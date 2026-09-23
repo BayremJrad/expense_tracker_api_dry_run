@@ -1,0 +1,24 @@
+$kind: http-example
+name: '409 Conflict - Reimbursed claim is final'
+request:
+  method: DELETE
+  url: '{{baseUrl}}/claims/clm_002'
+  headers:
+    - key: Authorization
+      value: 'Bearer {{authToken}}'
+response:
+  statusCode: 409
+  statusText: Conflict
+  headers:
+    - key: Content-Type
+      value: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "error": {
+          "code": "CLAIM_IS_FINAL",
+          "rule": "BR-27",
+          "message": "Claim 'clm_002' has been reimbursed and is final. It cannot be deleted."
+        }
+      }

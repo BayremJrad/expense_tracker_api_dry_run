@@ -1,0 +1,18 @@
+$kind: collection
+description: |-
+  API for Northbeam Consulting's Expense Tracker service. Allows employees to record expenses, attach receipts, group them into claims, and submit for approval. Approvers can review and approve/reject claims. Finance can manage categories and mark claims as reimbursed.
+
+  **Roles:**
+  - **Employee** – records expenses, attaches receipts, creates and submits claims
+  - **Approver** – reviews and approves/rejects submitted claims
+  - **Finance** – manages categories, marks claims as reimbursed, runs reports
+
+  **Base URL:** `{{baseUrl}}`
+
+  **Authentication:** Bearer token required on all endpoints (NFR-01).
+variables:
+  baseUrl: ""
+auth:
+  type: bearer
+  credentials:
+    token: "{{authToken}}"

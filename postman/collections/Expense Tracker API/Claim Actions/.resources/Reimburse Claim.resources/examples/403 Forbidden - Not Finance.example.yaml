@@ -1,0 +1,23 @@
+$kind: http-example
+name: '403 Forbidden - Not Finance'
+request:
+  method: POST
+  url: '{{baseUrl}}/claims/clm_010/reimburse'
+  headers:
+    - key: Authorization
+      value: 'Bearer {{authToken}}'
+response:
+  statusCode: 403
+  statusText: Forbidden
+  headers:
+    - key: Content-Type
+      value: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "error": {
+          "code": "FORBIDDEN",
+          "message": "Only Finance may mark a claim as reimbursed."
+        }
+      }

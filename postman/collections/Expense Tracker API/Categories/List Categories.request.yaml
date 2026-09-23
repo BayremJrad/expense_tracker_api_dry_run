@@ -1,0 +1,17 @@
+$kind: http-request
+name: List Categories
+order: 1000
+description: |-
+  Returns all active categories available for use on new expenses.
+  Finance may also see retired categories by passing `includeRetired=true`.
+  
+  **BR-06** – Any authenticated user can retrieve the category list.
+  **BR-08** – Read-only for employees and approvers.
+method: GET
+url: '{{baseUrl}}/categories'
+queryParams:
+  - key: includeRetired
+    value: 'false'
+    description: 'Set to true (Finance only) to include retired categories in the response.'
+    disabled: true
+examples: './.resources/List Categories.resources/examples/'

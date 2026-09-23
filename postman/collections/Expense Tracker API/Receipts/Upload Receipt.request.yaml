@@ -1,0 +1,34 @@
+$kind: http-request
+name: Upload Receipt
+order: 2000
+description: |-
+  Attaches a receipt image to an expense (BR-04).
+  
+  **Business rules:**
+  - Accepted formats: JPEG, PNG, PDF (NFR-07)
+  - Maximum file size: 10 MB per receipt (NFR-07)
+  - Maximum 10 receipts per expense (NFR-07)
+  - A receipt is mandatory when the expense amount exceeds the category receipt threshold (BR-19)
+  - Client Entertainment always requires a receipt (BR-20)
+  - Only the expense owner may attach receipts (BR-05)
+method: POST
+url: '{{baseUrl}}/expenses/:expenseId/receipts'
+headers:
+  - key: Content-Type
+    value: multipart/form-data
+pathVariables:
+  - key: expenseId
+    value: exp_001
+    description: The unique identifier of the expense.
+body:
+  type: formdata
+  content:
+    - key: file
+      type: file
+      src: receipt.jpg
+      description: 'The receipt image file. Accepted: JPEG, PNG, PDF. Max 10 MB.'
+    - key: filename
+      type: text
+      value: train_receipt.jpg
+      description: 'Optional display filename override.'
+examples: './.resources/Upload Receipt.resources/examples/'

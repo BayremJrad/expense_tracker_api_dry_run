@@ -1,0 +1,32 @@
+$kind: http-example
+name: '409 Conflict - Claim not in draft'
+request:
+  method: PATCH
+  url: '{{baseUrl}}/claims/clm_010'
+  headers:
+    - key: Authorization
+      value: 'Bearer {{authToken}}'
+    - key: Content-Type
+      value: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "title": "Updated title"
+      }
+response:
+  statusCode: 409
+  statusText: Conflict
+  headers:
+    - key: Content-Type
+      value: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "error": {
+          "code": "CLAIM_NOT_EDITABLE",
+          "rule": "BR-25",
+          "message": "Claim 'clm_010' is in 'submitted' status and cannot be modified."
+        }
+      }

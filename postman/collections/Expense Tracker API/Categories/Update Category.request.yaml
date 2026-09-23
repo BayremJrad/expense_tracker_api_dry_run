@@ -1,0 +1,24 @@
+$kind: http-request
+name: Update Category
+order: 4000
+description: |-
+  Updates an existing category's name, receipt threshold, or client reference requirement.
+  **Finance role required** (BR-07, BR-08).
+  
+  Retiring a category (setting `active: false`) does not affect historic expenses (BR-30).
+method: PATCH
+url: '{{baseUrl}}/categories/:categoryId'
+headers:
+  - key: Content-Type
+    value: application/json
+pathVariables:
+  - key: categoryId
+    value: cat_01
+    description: The unique identifier of the category to update.
+body:
+  type: json
+  content: |-
+    {
+      "receiptThreshold": 75.00
+    }
+examples: './.resources/Update Category.resources/examples/'

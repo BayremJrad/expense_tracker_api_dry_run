@@ -1,0 +1,58 @@
+$kind: http-example
+name: '200 OK - Draft claim'
+request:
+  method: GET
+  url: '{{baseUrl}}/claims/clm_001'
+  headers:
+    - key: Authorization
+      value: 'Bearer {{authToken}}'
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    - key: Content-Type
+      value: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "id": "clm_001",
+        "title": "September 2026 - Client site visits",
+        "status": "draft",
+        "totalEur": 187.19,
+        "ownerId": "usr_123",
+        "createdAt": "2026-09-23T09:00:00Z",
+        "submittedAt": null,
+        "decision": null,
+        "expenses": [
+          {
+            "id": "exp_001",
+            "amount": 120.50,
+            "currency": "GBP",
+            "amountEur": 142.19,
+            "dateIncurred": "2026-09-10",
+            "category": { "id": "cat_01", "name": "Travel" },
+            "description": "Train to Manchester client site",
+            "paymentMethod": "personal",
+            "receiptCount": 1
+          },
+          {
+            "id": "exp_002",
+            "amount": 45.00,
+            "currency": "EUR",
+            "amountEur": 45.00,
+            "dateIncurred": "2026-09-11",
+            "category": { "id": "cat_03", "name": "Meals" },
+            "description": "Team lunch during client workshop",
+            "paymentMethod": "personal",
+            "receiptCount": 1
+          }
+        ],
+        "statusHistory": [
+          {
+            "status": "draft",
+            "changedBy": "usr_123",
+            "changedAt": "2026-09-23T09:00:00Z"
+          }
+        ]
+      }

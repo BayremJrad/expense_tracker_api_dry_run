@@ -1,0 +1,40 @@
+$kind: http-example
+name: '200 OK - Claim submitted'
+request:
+  method: POST
+  url: '{{baseUrl}}/claims/clm_001/submit'
+  headers:
+    - key: Authorization
+      value: 'Bearer {{authToken}}'
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    - key: Content-Type
+      value: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "id": "clm_001",
+        "title": "September 2026 - Client site visits",
+        "status": "submitted",
+        "totalEur": 187.19,
+        "expenseCount": 2,
+        "ownerId": "usr_123",
+        "createdAt": "2026-09-23T09:00:00Z",
+        "submittedAt": "2026-09-23T10:30:00Z",
+        "decision": null,
+        "statusHistory": [
+          {
+            "status": "draft",
+            "changedBy": "usr_123",
+            "changedAt": "2026-09-23T09:00:00Z"
+          },
+          {
+            "status": "submitted",
+            "changedBy": "usr_123",
+            "changedAt": "2026-09-23T10:30:00Z"
+          }
+        ]
+      }

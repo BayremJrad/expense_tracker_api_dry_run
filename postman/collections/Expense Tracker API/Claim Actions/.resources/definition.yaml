@@ -1,0 +1,11 @@
+$kind: collection
+name: Claim Actions
+description: |-
+  State-transition actions on claims (submit, approve, reject, reimburse).
+  
+  - Submit: employee moves claim from draft → submitted (BR-09)
+  - Approve: approver moves claim from submitted → approved (BR-12); cannot self-approve (BR-26)
+  - Reject: approver moves claim from submitted → rejected with a reason (BR-12, BR-24)
+  - Reimburse: Finance marks an approved claim as reimbursed (BR-13)
+  - Every status change is recorded with actor and timestamp (BR-29)
+order: 5000

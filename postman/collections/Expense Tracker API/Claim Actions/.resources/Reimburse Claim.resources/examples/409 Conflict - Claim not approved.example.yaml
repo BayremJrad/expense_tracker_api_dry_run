@@ -1,0 +1,24 @@
+$kind: http-example
+name: '409 Conflict - Claim not approved'
+request:
+  method: POST
+  url: '{{baseUrl}}/claims/clm_001/reimburse'
+  headers:
+    - key: Authorization
+      value: 'Bearer {{authToken}}'
+response:
+  statusCode: 409
+  statusText: Conflict
+  headers:
+    - key: Content-Type
+      value: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "error": {
+          "code": "INVALID_STATUS_TRANSITION",
+          "rule": "BR-23",
+          "message": "Claim 'clm_001' is in 'draft' status. Only approved claims can be marked as reimbursed."
+        }
+      }

@@ -1,0 +1,26 @@
+$kind: http-example
+name: '422 Unprocessable - File too large'
+request:
+  method: POST
+  url: '{{baseUrl}}/expenses/exp_001/receipts'
+  headers:
+    - key: Authorization
+      value: 'Bearer {{authToken}}'
+    - key: Content-Type
+      value: multipart/form-data
+response:
+  statusCode: 422
+  statusText: Unprocessable Entity
+  headers:
+    - key: Content-Type
+      value: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "error": {
+          "code": "FILE_TOO_LARGE",
+          "rule": "NFR-07",
+          "message": "Receipt file exceeds the maximum allowed size of 10 MB."
+        }
+      }

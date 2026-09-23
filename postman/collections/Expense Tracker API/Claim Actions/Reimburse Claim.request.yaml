@@ -1,0 +1,19 @@
+$kind: http-request
+name: Reimburse Claim
+order: 4000
+description: |-
+  Marks an approved claim as reimbursed, transitioning it from `approved` → `reimbursed` (BR-13, BR-23).
+  **Finance role required.**
+  
+  **Business rules:**
+  - Claim must be in approved status (BR-23)
+  - A reimbursed claim is final — it cannot be reopened, amended, or deleted (BR-27)
+  - Status change is recorded with actor and timestamp (BR-29)
+  - Note: actual payment is handled by payroll; this endpoint records that reimbursement has occurred
+method: POST
+url: '{{baseUrl}}/claims/:claimId/reimburse'
+pathVariables:
+  - key: claimId
+    value: clm_010
+    description: The unique identifier of the claim to mark as reimbursed.
+examples: './.resources/Reimburse Claim.resources/examples/'

@@ -1,0 +1,12 @@
+$kind: http-request
+name: Get Category
+order: 2000
+description: |-
+  Returns a single category by its ID, including whether it is active or retired.
+method: GET
+url: '{{baseUrl}}/categories/:categoryId'
+pathVariables:
+  - key: categoryId
+    value: cat_01
+    description: The unique identifier of the category.
+examples: './.resources/Get Category.resources/examples/'

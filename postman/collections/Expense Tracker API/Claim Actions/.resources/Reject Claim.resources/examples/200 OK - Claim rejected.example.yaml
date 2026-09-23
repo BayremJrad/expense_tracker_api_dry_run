@@ -1,0 +1,64 @@
+$kind: http-example
+name: '200 OK - Claim rejected'
+request:
+  method: POST
+  url: '{{baseUrl}}/claims/clm_010/reject'
+  headers:
+    - key: Authorization
+      value: 'Bearer {{authToken}}'
+    - key: Content-Type
+      value: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "reason": "Missing receipt for the Accommodation expense exceeding the threshold. Please attach the hotel invoice and resubmit."
+      }
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    - key: Content-Type
+      value: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "id": "clm_010",
+        "title": "September 2026 - Client site visits",
+        "status": "draft",
+        "totalEur": 320.50,
+        "expenseCount": 3,
+        "ownerId": "usr_789",
+        "createdAt": "2026-09-20T14:00:00Z",
+        "submittedAt": "2026-09-23T08:00:00Z",
+        "decision": {
+          "decidedBy": "usr_456",
+          "decidedAt": "2026-09-23T11:15:00Z",
+          "outcome": "rejected",
+          "reason": "Missing receipt for the Accommodation expense exceeding the threshold. Please attach the hotel invoice and resubmit."
+        },
+        "statusHistory": [
+          {
+            "status": "draft",
+            "changedBy": "usr_789",
+            "changedAt": "2026-09-20T14:00:00Z"
+          },
+          {
+            "status": "submitted",
+            "changedBy": "usr_789",
+            "changedAt": "2026-09-23T08:00:00Z"
+          },
+          {
+            "status": "rejected",
+            "changedBy": "usr_456",
+            "changedAt": "2026-09-23T11:15:00Z"
+          },
+          {
+            "status": "draft",
+            "changedBy": "system",
+            "changedAt": "2026-09-23T11:15:01Z",
+            "note": "Returned to draft after rejection (BR-24)"
+          }
+        ]
+      }

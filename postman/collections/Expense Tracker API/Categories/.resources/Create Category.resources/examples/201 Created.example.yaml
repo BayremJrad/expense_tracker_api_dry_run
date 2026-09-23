@@ -1,0 +1,38 @@
+$kind: http-example
+name: '201 Created'
+request:
+  method: POST
+  url: '{{baseUrl}}/categories'
+  headers:
+    - key: Authorization
+      value: 'Bearer {{authToken}}'
+    - key: Content-Type
+      value: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "name": "Client Entertainment",
+        "receiptThreshold": 0.01,
+        "requiresReceiptAlways": true,
+        "requiresClientReference": true
+      }
+response:
+  statusCode: 201
+  statusText: Created
+  headers:
+    - key: Content-Type
+      value: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "id": "cat_05",
+        "name": "Client Entertainment",
+        "receiptThreshold": 0.01,
+        "requiresReceiptAlways": true,
+        "requiresClientReference": true,
+        "active": true,
+        "createdAt": "2026-09-23T10:00:00Z",
+        "updatedAt": "2026-09-23T10:00:00Z"
+      }

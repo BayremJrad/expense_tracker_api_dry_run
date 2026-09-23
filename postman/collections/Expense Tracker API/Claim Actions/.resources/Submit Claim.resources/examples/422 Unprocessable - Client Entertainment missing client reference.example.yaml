@@ -1,0 +1,25 @@
+$kind: http-example
+name: '422 Unprocessable - Client Entertainment missing client reference'
+request:
+  method: POST
+  url: '{{baseUrl}}/claims/clm_004/submit'
+  headers:
+    - key: Authorization
+      value: 'Bearer {{authToken}}'
+response:
+  statusCode: 422
+  statusText: Unprocessable Entity
+  headers:
+    - key: Content-Type
+      value: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "error": {
+          "code": "MISSING_CLIENT_REFERENCE",
+          "rule": "BR-20",
+          "message": "Expense 'exp_008' (Client Entertainment) requires a client reference. Please update the expense before submitting.",
+          "expenseId": "exp_008"
+        }
+      }

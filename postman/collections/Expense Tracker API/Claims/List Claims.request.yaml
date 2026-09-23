@@ -1,0 +1,27 @@
+$kind: http-request
+name: List Claims
+order: 1000
+description: |-
+  Returns a paginated list of claims.
+  
+  - Employees see only their own claims (BR-10)
+  - Approvers see claims submitted to them (BR-11)
+  - Finance sees all claims (BR-14)
+  
+  Supports filtering by status. Results are paginated (NFR-05).
+method: GET
+url: '{{baseUrl}}/claims'
+queryParams:
+  - key: status
+    value: submitted
+    description: 'Filter by claim status: draft | submitted | approved | rejected | reimbursed'
+    disabled: true
+  - key: page
+    value: '1'
+    description: 'Page number (1-based).'
+    disabled: true
+  - key: pageSize
+    value: '20'
+    description: 'Number of results per page. Max 100.'
+    disabled: true
+examples: './.resources/List Claims.resources/examples/'

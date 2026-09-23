@@ -1,0 +1,16 @@
+$kind: http-request
+name: Get Claim
+order: 3000
+description: |-
+  Returns a single claim by ID, including all its expenses and receipts (BR-11).
+  
+  - Employees can only see their own claims (BR-10)
+  - Approvers can see claims submitted to them (BR-11)
+  - Finance can see all claims (BR-14)
+method: GET
+url: '{{baseUrl}}/claims/:claimId'
+pathVariables:
+  - key: claimId
+    value: clm_001
+    description: The unique identifier of the claim.
+examples: './.resources/Get Claim.resources/examples/'

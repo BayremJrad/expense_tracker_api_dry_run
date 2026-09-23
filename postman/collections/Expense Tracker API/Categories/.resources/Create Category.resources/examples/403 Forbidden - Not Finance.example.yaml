@@ -1,0 +1,35 @@
+$kind: http-example
+name: '403 Forbidden - Not Finance'
+request:
+  method: POST
+  url: '{{baseUrl}}/categories'
+  headers:
+    - key: Authorization
+      value: 'Bearer {{authToken}}'
+    - key: Content-Type
+      value: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "name": "Parking",
+        "receiptThreshold": 5.00,
+        "requiresReceiptAlways": false,
+        "requiresClientReference": false
+      }
+response:
+  statusCode: 403
+  statusText: Forbidden
+  headers:
+    - key: Content-Type
+      value: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "error": {
+          "code": "FORBIDDEN",
+          "rule": "BR-08",
+          "message": "Only Finance may modify the category list."
+        }
+      }

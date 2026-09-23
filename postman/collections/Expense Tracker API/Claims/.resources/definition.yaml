@@ -1,0 +1,11 @@
+$kind: collection
+name: Claims
+description: |-
+  Groups of expenses submitted together for approval.
+  
+  - An employee groups unclaimed expenses into a claim and submits it (BR-09)
+  - Claim status lifecycle: draft → submitted → approved/rejected → reimbursed (BR-23)
+  - A rejected claim returns to draft so the employee can correct and resubmit (BR-24)
+  - A claim must contain at least one expense (BR-21); expenses cannot be in more than one claim (BR-22)
+  - Expenses older than 90 days cannot be added to a claim (BR-18)
+order: 4000

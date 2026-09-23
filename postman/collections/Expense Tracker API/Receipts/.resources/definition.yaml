@@ -1,0 +1,10 @@
+$kind: collection
+name: Receipts
+description: |-
+  Receipt image attachments for expenses.
+  
+  - Up to 10 receipts per expense, max 10 MB each, JPEG/PNG/PDF only (NFR-07)
+  - A receipt is mandatory when the expense amount exceeds the category receipt threshold (BR-19)
+  - Client Entertainment always requires a receipt (BR-20)
+  - Employees can attach and remove receipts on their own expenses (BR-04)
+order: 3000

@@ -1,0 +1,49 @@
+$kind: http-example
+name: '201 Created'
+request:
+  method: POST
+  url: '{{baseUrl}}/expenses'
+  headers:
+    - key: Authorization
+      value: 'Bearer {{authToken}}'
+    - key: Content-Type
+      value: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "amount": 120.50,
+        "currency": "GBP",
+        "dateIncurred": "2026-09-10",
+        "categoryId": "cat_01",
+        "description": "Train to Manchester client site",
+        "paymentMethod": "personal",
+        "clientReference": null
+      }
+response:
+  statusCode: 201
+  statusText: Created
+  headers:
+    - key: Content-Type
+      value: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "id": "exp_001",
+        "amount": 120.50,
+        "currency": "GBP",
+        "amountEur": 142.19,
+        "dateIncurred": "2026-09-10",
+        "category": {
+          "id": "cat_01",
+          "name": "Travel"
+        },
+        "description": "Train to Manchester client site",
+        "paymentMethod": "personal",
+        "clientReference": null,
+        "receiptCount": 0,
+        "claimId": null,
+        "ownerId": "usr_123",
+        "recordedAt": "2026-09-10T18:30:00Z"
+      }

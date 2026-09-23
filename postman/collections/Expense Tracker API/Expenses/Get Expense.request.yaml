@@ -1,0 +1,13 @@
+$kind: http-request
+name: Get Expense
+order: 3000
+description: |-
+  Returns a single expense by ID. Employees can only retrieve their own expenses (BR-05).
+  Finance can retrieve any expense.
+method: GET
+url: '{{baseUrl}}/expenses/:expenseId'
+pathVariables:
+  - key: expenseId
+    value: exp_001
+    description: The unique identifier of the expense.
+examples: './.resources/Get Expense.resources/examples/'

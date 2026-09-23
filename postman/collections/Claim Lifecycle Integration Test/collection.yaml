@@ -1,0 +1,13 @@
+$kind: collection
+name: Claim Lifecycle Integration Test
+description: |-
+  Integration test for the core claim lifecycle business scenario:
+  Create Expense → Create Claim → Submit → Approve
+
+  Validates the happy path: draft → submitted → approved.
+  IDs are chained automatically via collection variables.
+auth:
+  type: bearer
+  credentials:
+    - key: token
+      value: '{{employeeToken}}'

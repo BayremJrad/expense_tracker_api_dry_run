@@ -1,0 +1,30 @@
+$kind: http-request
+name: Create Expense
+order: 2000
+description: |-
+  Records a new expense for the authenticated employee (BR-01).
+  
+  **Business rules:**
+  - Amount must be greater than zero (BR-16)
+  - Date incurred must not be in the future (BR-17)
+  - Category must be an active category (BR-06)
+  - For non-EUR currencies, the EUR equivalent is calculated using the exchange rate on the date incurred (BR-28)
+  - Client Entertainment requires a client reference (BR-20)
+method: POST
+url: '{{baseUrl}}/expenses'
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "amount": 120.50,
+      "currency": "GBP",
+      "dateIncurred": "2026-09-10",
+      "categoryId": "cat_01",
+      "description": "Train to Manchester client site",
+      "paymentMethod": "personal",
+      "clientReference": null
+    }
+examples: './.resources/Create Expense.resources/examples/'

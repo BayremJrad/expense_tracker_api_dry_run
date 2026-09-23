@@ -1,0 +1,25 @@
+$kind: http-example
+name: '422 Unprocessable - Missing receipt'
+request:
+  method: POST
+  url: '{{baseUrl}}/claims/clm_003/submit'
+  headers:
+    - key: Authorization
+      value: 'Bearer {{authToken}}'
+response:
+  statusCode: 422
+  statusText: Unprocessable Entity
+  headers:
+    - key: Content-Type
+      value: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "error": {
+          "code": "MISSING_REQUIRED_RECEIPT",
+          "rule": "BR-19",
+          "message": "Expense 'exp_007' (Accommodation, €95.00) requires a receipt because the amount exceeds the category threshold. Please attach a receipt before submitting.",
+          "expenseId": "exp_007"
+        }
+      }

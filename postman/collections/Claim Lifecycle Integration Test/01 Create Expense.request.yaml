@@ -1,0 +1,37 @@
+$kind: http-request
+name: Create Expense
+order: 1000
+method: POST
+url: "{{baseUrl}}/expenses"
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "amount": 90,
+      "currency": "EUR",
+      "dateIncurred": "2026-09-15",
+      "categoryId": "{{categoryId}}",
+      "description": "Team lunch - client meeting",
+      "paymentMethod": "personal",
+      "clientReference": null
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Expense created with status 201", function () {
+          pm.response.to.have.status(201);
+      });
+
+      pm.test("Response has expense ID", function () {
+          const body = pm.response.json();
+          pm.expect(body).to.have.property("id");
+          pm.collectionVariables.set("expenseId", body.id);
+      });
+
+      pm.test("Expense status is unclaimed", function () {
+          const body = pm.response.json();
+          pm.expect(body.status).to.eql("unclaimed");
+      });
+    language: text/javascript

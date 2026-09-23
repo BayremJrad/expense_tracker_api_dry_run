@@ -1,0 +1,63 @@
+$kind: http-example
+name: '200 OK - Expenses list'
+request:
+  method: GET
+  url: '{{baseUrl}}/expenses'
+  headers:
+    - key: Authorization
+      value: 'Bearer {{authToken}}'
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    - key: Content-Type
+      value: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "data": [
+          {
+            "id": "exp_001",
+            "amount": 120.50,
+            "currency": "GBP",
+            "amountEur": 142.19,
+            "dateIncurred": "2026-09-10",
+            "category": {
+              "id": "cat_01",
+              "name": "Travel"
+            },
+            "description": "Train to Manchester client site",
+            "paymentMethod": "personal",
+            "clientReference": null,
+            "receiptCount": 1,
+            "claimId": null,
+            "ownerId": "usr_123",
+            "recordedAt": "2026-09-10T18:30:00Z"
+          },
+          {
+            "id": "exp_002",
+            "amount": 45.00,
+            "currency": "EUR",
+            "amountEur": 45.00,
+            "dateIncurred": "2026-09-11",
+            "category": {
+              "id": "cat_03",
+              "name": "Meals"
+            },
+            "description": "Team lunch during client workshop",
+            "paymentMethod": "personal",
+            "clientReference": "CLIENT-007",
+            "receiptCount": 1,
+            "claimId": null,
+            "ownerId": "usr_123",
+            "recordedAt": "2026-09-11T13:00:00Z"
+          }
+        ],
+        "pagination": {
+          "page": 1,
+          "pageSize": 20,
+          "total": 2,
+          "totalPages": 1
+        }
+      }

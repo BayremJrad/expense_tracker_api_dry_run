@@ -1,0 +1,19 @@
+$kind: http-request
+name: Delete Receipt
+order: 3000
+description: |-
+  Removes a receipt attachment from an expense (BR-04).
+  
+  **Business rules:**
+  - Only the expense owner may remove receipts (BR-05)
+  - Cannot remove a receipt from an expense in a submitted, approved, or reimbursed claim (BR-25)
+method: DELETE
+url: '{{baseUrl}}/expenses/:expenseId/receipts/:receiptId'
+pathVariables:
+  - key: expenseId
+    value: exp_001
+    description: The unique identifier of the expense.
+  - key: receiptId
+    value: rec_001
+    description: The unique identifier of the receipt to delete.
+examples: './.resources/Delete Receipt.resources/examples/'

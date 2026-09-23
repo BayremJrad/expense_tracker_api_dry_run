@@ -1,0 +1,68 @@
+$kind: http-example
+name: '200 OK - Rejected claim with reason'
+request:
+  method: GET
+  url: '{{baseUrl}}/claims/clm_005'
+  headers:
+    - key: Authorization
+      value: 'Bearer {{authToken}}'
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    - key: Content-Type
+      value: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "id": "clm_005",
+        "title": "August 2026 - Travel",
+        "status": "draft",
+        "totalEur": 95.00,
+        "ownerId": "usr_123",
+        "createdAt": "2026-08-25T10:00:00Z",
+        "submittedAt": "2026-08-26T08:00:00Z",
+        "decision": {
+          "decidedBy": "usr_456",
+          "decidedAt": "2026-08-27T09:00:00Z",
+          "outcome": "rejected",
+          "reason": "Missing receipt for the Accommodation expense exceeding the threshold."
+        },
+        "expenses": [
+          {
+            "id": "exp_010",
+            "amount": 95.00,
+            "currency": "EUR",
+            "amountEur": 95.00,
+            "dateIncurred": "2026-08-20",
+            "category": { "id": "cat_02", "name": "Accommodation" },
+            "description": "Hotel stay in London",
+            "paymentMethod": "personal",
+            "receiptCount": 0
+          }
+        ],
+        "statusHistory": [
+          {
+            "status": "draft",
+            "changedBy": "usr_123",
+            "changedAt": "2026-08-25T10:00:00Z"
+          },
+          {
+            "status": "submitted",
+            "changedBy": "usr_123",
+            "changedAt": "2026-08-26T08:00:00Z"
+          },
+          {
+            "status": "rejected",
+            "changedBy": "usr_456",
+            "changedAt": "2026-08-27T09:00:00Z"
+          },
+          {
+            "status": "draft",
+            "changedBy": "system",
+            "changedAt": "2026-08-27T09:00:01Z",
+            "note": "Returned to draft after rejection (BR-24)"
+          }
+        ]
+      }

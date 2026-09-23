@@ -1,0 +1,9 @@
+$kind: collection
+name: Categories
+description: |-
+  Finance-managed list of expense categories (e.g. Travel, Accommodation, Meals, Software, Client Entertainment).
+  
+  - Any authenticated user can read categories (BR-06)
+  - Only Finance may create, update, or retire a category (BR-07, BR-08)
+  - Retiring a category does not affect historic expenses (BR-30)
+order: 1000

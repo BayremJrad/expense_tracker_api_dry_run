@@ -1,0 +1,45 @@
+$kind: http-example
+name: '200 OK - Updated'
+request:
+  method: PATCH
+  url: '{{baseUrl}}/expenses/exp_001'
+  headers:
+    - key: Authorization
+      value: 'Bearer {{authToken}}'
+    - key: Content-Type
+      value: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "description": "Train to Manchester client site (return)",
+        "amount": 135.00
+      }
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    - key: Content-Type
+      value: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "id": "exp_001",
+        "amount": 135.00,
+        "currency": "GBP",
+        "amountEur": 159.57,
+        "dateIncurred": "2026-09-10",
+        "category": {
+          "id": "cat_01",
+          "name": "Travel"
+        },
+        "description": "Train to Manchester client site (return)",
+        "paymentMethod": "personal",
+        "clientReference": null,
+        "receiptCount": 1,
+        "claimId": null,
+        "ownerId": "usr_123",
+        "recordedAt": "2026-09-10T18:30:00Z",
+        "updatedAt": "2026-09-23T09:00:00Z"
+      }

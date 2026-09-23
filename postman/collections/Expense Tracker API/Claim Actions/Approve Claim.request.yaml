@@ -1,0 +1,18 @@
+$kind: http-request
+name: Approve Claim
+order: 2000
+description: |-
+  Approves a submitted claim, transitioning it from `submitted` → `approved` (BR-12, BR-23).
+  **Approver role required.**
+  
+  **Business rules:**
+  - Claim must be in submitted status (BR-23)
+  - An approver cannot approve a claim they submitted themselves (BR-26)
+  - Status change is recorded with actor and timestamp (BR-29)
+method: POST
+url: '{{baseUrl}}/claims/:claimId/approve'
+pathVariables:
+  - key: claimId
+    value: clm_010
+    description: The unique identifier of the claim to approve.
+examples: './.resources/Approve Claim.resources/examples/'

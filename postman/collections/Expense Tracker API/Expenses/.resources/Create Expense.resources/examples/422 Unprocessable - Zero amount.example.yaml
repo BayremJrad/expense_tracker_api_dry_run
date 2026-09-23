@@ -1,0 +1,38 @@
+$kind: http-example
+name: '422 Unprocessable - Zero amount'
+request:
+  method: POST
+  url: '{{baseUrl}}/expenses'
+  headers:
+    - key: Authorization
+      value: 'Bearer {{authToken}}'
+    - key: Content-Type
+      value: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "amount": 0,
+        "currency": "EUR",
+        "dateIncurred": "2026-09-10",
+        "categoryId": "cat_03",
+        "description": "Zero amount test",
+        "paymentMethod": "personal"
+      }
+response:
+  statusCode: 422
+  statusText: Unprocessable Entity
+  headers:
+    - key: Content-Type
+      value: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "error": {
+          "code": "VALIDATION_ERROR",
+          "rule": "BR-16",
+          "message": "Expense amount must be greater than zero.",
+          "field": "amount"
+        }
+      }

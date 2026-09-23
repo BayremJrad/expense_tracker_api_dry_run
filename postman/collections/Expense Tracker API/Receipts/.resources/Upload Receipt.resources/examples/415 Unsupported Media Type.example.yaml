@@ -1,0 +1,26 @@
+$kind: http-example
+name: '415 Unsupported Media Type'
+request:
+  method: POST
+  url: '{{baseUrl}}/expenses/exp_001/receipts'
+  headers:
+    - key: Authorization
+      value: 'Bearer {{authToken}}'
+    - key: Content-Type
+      value: multipart/form-data
+response:
+  statusCode: 415
+  statusText: Unsupported Media Type
+  headers:
+    - key: Content-Type
+      value: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "error": {
+          "code": "UNSUPPORTED_FILE_TYPE",
+          "rule": "NFR-07",
+          "message": "Unsupported file type. Accepted formats are JPEG, PNG, and PDF."
+        }
+      }

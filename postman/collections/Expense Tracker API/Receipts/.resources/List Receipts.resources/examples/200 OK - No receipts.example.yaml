@@ -1,0 +1,21 @@
+$kind: http-example
+name: '200 OK - No receipts'
+request:
+  method: GET
+  url: '{{baseUrl}}/expenses/exp_002/receipts'
+  headers:
+    - key: Authorization
+      value: 'Bearer {{authToken}}'
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    - key: Content-Type
+      value: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "data": [],
+        "total": 0
+      }

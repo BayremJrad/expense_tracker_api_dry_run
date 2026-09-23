@@ -1,0 +1,29 @@
+$kind: http-request
+name: Reject Claim
+order: 3000
+description: |-
+  Rejects a submitted claim with a mandatory reason, transitioning it from `submitted` → `rejected` → `draft` (BR-12, BR-23, BR-24).
+  **Approver role required.**
+  
+  **Business rules:**
+  - Claim must be in submitted status (BR-23)
+  - A rejection reason is required (BR-24)
+  - The rejected claim returns to draft so the employee can correct and resubmit (BR-24)
+  - The rejection reason is preserved on the claim (BR-24)
+  - Status change is recorded with actor and timestamp (BR-29)
+method: POST
+url: '{{baseUrl}}/claims/:claimId/reject'
+headers:
+  - key: Content-Type
+    value: application/json
+pathVariables:
+  - key: claimId
+    value: clm_010
+    description: The unique identifier of the claim to reject.
+body:
+  type: json
+  content: |-
+    {
+      "reason": "Missing receipt for the Accommodation expense exceeding the threshold. Please attach the hotel invoice and resubmit."
+    }
+examples: './.resources/Reject Claim.resources/examples/'

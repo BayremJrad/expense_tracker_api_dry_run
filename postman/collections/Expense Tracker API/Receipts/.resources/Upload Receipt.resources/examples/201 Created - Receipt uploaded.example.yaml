@@ -1,0 +1,28 @@
+$kind: http-example
+name: '201 Created - Receipt uploaded'
+request:
+  method: POST
+  url: '{{baseUrl}}/expenses/exp_001/receipts'
+  headers:
+    - key: Authorization
+      value: 'Bearer {{authToken}}'
+    - key: Content-Type
+      value: multipart/form-data
+response:
+  statusCode: 201
+  statusText: Created
+  headers:
+    - key: Content-Type
+      value: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "id": "rec_001",
+        "expenseId": "exp_001",
+        "filename": "train_receipt.jpg",
+        "mimeType": "image/jpeg",
+        "sizeBytes": 204800,
+        "uploadedAt": "2026-09-10T18:35:00Z",
+        "uploadedBy": "usr_123"
+      }

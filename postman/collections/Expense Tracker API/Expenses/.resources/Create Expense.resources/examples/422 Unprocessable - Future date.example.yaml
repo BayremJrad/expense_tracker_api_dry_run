@@ -1,0 +1,38 @@
+$kind: http-example
+name: '422 Unprocessable - Future date'
+request:
+  method: POST
+  url: '{{baseUrl}}/expenses'
+  headers:
+    - key: Authorization
+      value: 'Bearer {{authToken}}'
+    - key: Content-Type
+      value: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "amount": 50.00,
+        "currency": "EUR",
+        "dateIncurred": "2027-01-01",
+        "categoryId": "cat_03",
+        "description": "Future lunch",
+        "paymentMethod": "personal"
+      }
+response:
+  statusCode: 422
+  statusText: Unprocessable Entity
+  headers:
+    - key: Content-Type
+      value: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "error": {
+          "code": "VALIDATION_ERROR",
+          "rule": "BR-17",
+          "message": "The date incurred must not be in the future.",
+          "field": "dateIncurred"
+        }
+      }

@@ -1,0 +1,62 @@
+$kind: http-example
+name: '200 OK - Active categories'
+request:
+  method: GET
+  url: '{{baseUrl}}/categories'
+  headers:
+    - key: Authorization
+      value: 'Bearer {{authToken}}'
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    - key: Content-Type
+      value: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "data": [
+          {
+            "id": "cat_01",
+            "name": "Travel",
+            "receiptThreshold": 50.00,
+            "requiresReceiptAlways": false,
+            "requiresClientReference": false,
+            "active": true
+          },
+          {
+            "id": "cat_02",
+            "name": "Accommodation",
+            "receiptThreshold": 0.01,
+            "requiresReceiptAlways": true,
+            "requiresClientReference": false,
+            "active": true
+          },
+          {
+            "id": "cat_03",
+            "name": "Meals",
+            "receiptThreshold": 25.00,
+            "requiresReceiptAlways": false,
+            "requiresClientReference": false,
+            "active": true
+          },
+          {
+            "id": "cat_04",
+            "name": "Software",
+            "receiptThreshold": 10.00,
+            "requiresReceiptAlways": false,
+            "requiresClientReference": false,
+            "active": true
+          },
+          {
+            "id": "cat_05",
+            "name": "Client Entertainment",
+            "receiptThreshold": 0.01,
+            "requiresReceiptAlways": true,
+            "requiresClientReference": true,
+            "active": true
+          }
+        ],
+        "total": 5
+      }

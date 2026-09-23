@@ -1,0 +1,24 @@
+$kind: http-request
+name: Create Claim
+order: 2000
+description: |-
+  Creates a new claim in draft status, grouping one or more unclaimed expenses (BR-09).
+  
+  **Business rules:**
+  - A claim must contain at least one expense (BR-21)
+  - Each expense may belong to at most one claim (BR-22)
+  - Expenses incurred more than 90 days ago cannot be added to a claim (BR-18)
+  - All expenses must belong to the authenticated employee
+method: POST
+url: '{{baseUrl}}/claims'
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "title": "September 2026 - Client site visits",
+      "expenseIds": ["exp_001", "exp_002"]
+    }
+examples: './.resources/Create Claim.resources/examples/'

@@ -1,0 +1,103 @@
+{
+  "endpoints": {
+    "/categories": {
+      "get": "import { ExpenseTrackerApiSdk } from 'expense-tracker-api-sdk';\n\n(async () => {\n  const expenseTrackerApiSdk = new ExpenseTrackerApiSdk({\n\ttoken: 'YOUR_TOKEN',\n});\n\n  const data = await expenseTrackerApiSdk.expenseTrackerApiSdk.listCategories({\n      includeRetired: \"false\",\n  });\n\n  console.log(data);\n})();\n",
+      "post": "import { CreateCategoryRequest, ExpenseTrackerApiSdk } from 'expense-tracker-api-sdk';\n\n(async () => {\n  const expenseTrackerApiSdk = new ExpenseTrackerApiSdk({\n\ttoken: 'YOUR_TOKEN',\n});\n\n  \n  const createCategoryRequest: CreateCategoryRequest = {\t\n    name: \"Client Entertainment\",\n    receiptThreshold: 0.01,\n    requiresReceiptAlways: true,\n    requiresClientReference: true\n  };\n\n  const data = await expenseTrackerApiSdk.expenseTrackerApiSdk.createCategory(createCategoryRequest);\n\n  console.log(data);\n})();\n"
+    },
+    "/categories/{categoryId}": {
+      "get": "import { ExpenseTrackerApiSdk } from 'expense-tracker-api-sdk';\n\n(async () => {\n  const expenseTrackerApiSdk = new ExpenseTrackerApiSdk({\n\ttoken: 'YOUR_TOKEN',\n});\n\n  const data = await expenseTrackerApiSdk.expenseTrackerApiSdk.getCategory(\"cat_01\");\n\n  console.log(data);\n})();\n",
+      "patch": "import { ExpenseTrackerApiSdk, UpdateCategoryRequest } from 'expense-tracker-api-sdk';\n\n(async () => {\n  const expenseTrackerApiSdk = new ExpenseTrackerApiSdk({\n\ttoken: 'YOUR_TOKEN',\n});\n\n  \n  const updateCategoryRequest: UpdateCategoryRequest = {\t\n    receiptThreshold: 75\n  };\n\n  const data = await expenseTrackerApiSdk.expenseTrackerApiSdk.updateCategory(\n  \"cat_01\",\n  updateCategoryRequest\n);\n\n  console.log(data);\n})();\n"
+    },
+    "/expenses": {
+      "get": "import { ExpenseTrackerApiSdk } from 'expense-tracker-api-sdk';\n\n(async () => {\n  const expenseTrackerApiSdk = new ExpenseTrackerApiSdk({\n\ttoken: 'YOUR_TOKEN',\n});\n\n  const data = await expenseTrackerApiSdk.expenseTrackerApiSdk.listExpenses({\n      dateFrom: \"2026-09-01\",\n      dateTo: \"2026-09-30\",\n      categoryId: \"cat_01\",\n      claimed: \"false\",\n      page: \"1\",\n      pageSize: \"20\",\n  });\n\n  console.log(data);\n})();\n",
+      "post": "import { CreateExpenseRequest, ExpenseTrackerApiSdk } from 'expense-tracker-api-sdk';\n\n(async () => {\n  const expenseTrackerApiSdk = new ExpenseTrackerApiSdk({\n\ttoken: 'YOUR_TOKEN',\n});\n\n  \n  const createExpenseRequest: CreateExpenseRequest = {\t\n    amount: 120.5,\n    currency: \"GBP\",\n    dateIncurred: \"2026-09-10\",\n    categoryId: \"cat_01\",\n    description: \"Train to Manchester client site\",\n    paymentMethod: \"personal\",\n    clientReference: []\n  };\n\n  const data = await expenseTrackerApiSdk.expenseTrackerApiSdk.createExpense(createExpenseRequest);\n\n  console.log(data);\n})();\n"
+    },
+    "/expenses/{expenseId}": {
+      "get": "import { ExpenseTrackerApiSdk } from 'expense-tracker-api-sdk';\n\n(async () => {\n  const expenseTrackerApiSdk = new ExpenseTrackerApiSdk({\n\ttoken: 'YOUR_TOKEN',\n});\n\n  const data = await expenseTrackerApiSdk.expenseTrackerApiSdk.getExpense(\"exp_001\");\n\n  console.log(data);\n})();\n",
+      "patch": "import { ExpenseTrackerApiSdk, UpdateExpenseRequest } from 'expense-tracker-api-sdk';\n\n(async () => {\n  const expenseTrackerApiSdk = new ExpenseTrackerApiSdk({\n\ttoken: 'YOUR_TOKEN',\n});\n\n  \n  const updateExpenseRequest: UpdateExpenseRequest = {\t\n    description: \"Train to Manchester client site (return)\",\n    amount: 135\n  };\n\n  const data = await expenseTrackerApiSdk.expenseTrackerApiSdk.updateExpense(\n  \"exp_001\",\n  updateExpenseRequest\n);\n\n  console.log(data);\n})();\n",
+      "delete": "import { ExpenseTrackerApiSdk } from 'expense-tracker-api-sdk';\n\n(async () => {\n  const expenseTrackerApiSdk = new ExpenseTrackerApiSdk({\n\ttoken: 'YOUR_TOKEN',\n});\n\n  const data = await expenseTrackerApiSdk.expenseTrackerApiSdk.deleteExpense(\"exp_001\");\n\n  console.log(data);\n})();\n"
+    },
+    "/expenses/{expenseId}/receipts": {
+      "get": "import { ExpenseTrackerApiSdk } from 'expense-tracker-api-sdk';\n\n(async () => {\n  const expenseTrackerApiSdk = new ExpenseTrackerApiSdk({\n\ttoken: 'YOUR_TOKEN',\n});\n\n  const data = await expenseTrackerApiSdk.expenseTrackerApiSdk.listReceipts(\"exp_001\");\n\n  console.log(data);\n})();\n",
+      "post": "import { ExpenseTrackerApiSdk, UploadReceiptRequest } from 'expense-tracker-api-sdk';\n\n(async () => {\n  const expenseTrackerApiSdk = new ExpenseTrackerApiSdk({\n\ttoken: 'YOUR_TOKEN',\n});\n\n  \n  const uploadReceiptRequest: UploadReceiptRequest = {\t\n    file: new ArrayBuffer(0),\n    filename: \"train_receipt.jpg\"\n  };\n\n  const data = await expenseTrackerApiSdk.expenseTrackerApiSdk.uploadReceipt(\n  \"exp_001\",\n  uploadReceiptRequest\n);\n\n  console.log(data);\n})();\n"
+    },
+    "/expenses/{expenseId}/receipts/{receiptId}": {
+      "delete": "import { ExpenseTrackerApiSdk } from 'expense-tracker-api-sdk';\n\n(async () => {\n  const expenseTrackerApiSdk = new ExpenseTrackerApiSdk({\n\ttoken: 'YOUR_TOKEN',\n});\n\n  const data = await expenseTrackerApiSdk.expenseTrackerApiSdk.deleteReceipt(\n  \"exp_001\",\n  \"rec_001\"\n);\n\n  console.log(data);\n})();\n"
+    },
+    "/claims": {
+      "get": "import { ExpenseTrackerApiSdk } from 'expense-tracker-api-sdk';\n\n(async () => {\n  const expenseTrackerApiSdk = new ExpenseTrackerApiSdk({\n\ttoken: 'YOUR_TOKEN',\n});\n\n  const data = await expenseTrackerApiSdk.expenseTrackerApiSdk.listClaims({\n      status: \"submitted\",\n      page: \"1\",\n      pageSize: \"20\",\n  });\n\n  console.log(data);\n})();\n",
+      "post": "import { CreateClaimRequest, ExpenseTrackerApiSdk } from 'expense-tracker-api-sdk';\n\n(async () => {\n  const expenseTrackerApiSdk = new ExpenseTrackerApiSdk({\n\ttoken: 'YOUR_TOKEN',\n});\n\n  \n  const createClaimRequest: CreateClaimRequest = {\t\n    title: \"September 2026 - Client site visits\",\n    expenseIds: [\"exp_001\"]\n  };\n\n  const data = await expenseTrackerApiSdk.expenseTrackerApiSdk.createClaim(createClaimRequest);\n\n  console.log(data);\n})();\n"
+    },
+    "/claims/{claimId}": {
+      "get": "import { ExpenseTrackerApiSdk } from 'expense-tracker-api-sdk';\n\n(async () => {\n  const expenseTrackerApiSdk = new ExpenseTrackerApiSdk({\n\ttoken: 'YOUR_TOKEN',\n});\n\n  const data = await expenseTrackerApiSdk.expenseTrackerApiSdk.getClaim(\"clm_001\");\n\n  console.log(data);\n})();\n",
+      "patch": "import { CreateClaimRequest, ExpenseTrackerApiSdk } from 'expense-tracker-api-sdk';\n\n(async () => {\n  const expenseTrackerApiSdk = new ExpenseTrackerApiSdk({\n\ttoken: 'YOUR_TOKEN',\n});\n\n  \n  const createClaimRequest: CreateClaimRequest = {\t\n    title: \"September 2026 - Client site visits\",\n    expenseIds: [\"exp_001\"]\n  };\n\n  const data = await expenseTrackerApiSdk.expenseTrackerApiSdk.updateClaim(\n  \"clm_001\",\n  createClaimRequest\n);\n\n  console.log(data);\n})();\n",
+      "delete": "import { ExpenseTrackerApiSdk } from 'expense-tracker-api-sdk';\n\n(async () => {\n  const expenseTrackerApiSdk = new ExpenseTrackerApiSdk({\n\ttoken: 'YOUR_TOKEN',\n});\n\n  const data = await expenseTrackerApiSdk.expenseTrackerApiSdk.deleteClaim(\"clm_001\");\n\n  console.log(data);\n})();\n"
+    },
+    "/claims/{claimId}/submit": {
+      "post": "import { ExpenseTrackerApiSdk } from 'expense-tracker-api-sdk';\n\n(async () => {\n  const expenseTrackerApiSdk = new ExpenseTrackerApiSdk({\n\ttoken: 'YOUR_TOKEN',\n});\n\n  const data = await expenseTrackerApiSdk.expenseTrackerApiSdk.submitClaim(\"clm_001\");\n\n  console.log(data);\n})();\n"
+    },
+    "/claims/{claimId}/approve": {
+      "post": "import { ExpenseTrackerApiSdk } from 'expense-tracker-api-sdk';\n\n(async () => {\n  const expenseTrackerApiSdk = new ExpenseTrackerApiSdk({\n\ttoken: 'YOUR_TOKEN',\n});\n\n  const data = await expenseTrackerApiSdk.expenseTrackerApiSdk.approveClaim(\"clm_010\");\n\n  console.log(data);\n})();\n"
+    },
+    "/claims/{claimId}/reject": {
+      "post": "import { ExpenseTrackerApiSdk, RejectClaimRequest } from 'expense-tracker-api-sdk';\n\n(async () => {\n  const expenseTrackerApiSdk = new ExpenseTrackerApiSdk({\n\ttoken: 'YOUR_TOKEN',\n});\n\n  \n  const rejectClaimRequest: RejectClaimRequest = {\t\n    reason: \"Missing receipt for the Accommodation expense exceeding the threshold. Please attach the hotel invoice and resubmit.\"\n  };\n\n  const data = await expenseTrackerApiSdk.expenseTrackerApiSdk.rejectClaim(\n  \"clm_010\",\n  rejectClaimRequest\n);\n\n  console.log(data);\n})();\n"
+    },
+    "/claims/{claimId}/reimburse": {
+      "post": "import { ExpenseTrackerApiSdk } from 'expense-tracker-api-sdk';\n\n(async () => {\n  const expenseTrackerApiSdk = new ExpenseTrackerApiSdk({\n\ttoken: 'YOUR_TOKEN',\n});\n\n  const data = await expenseTrackerApiSdk.expenseTrackerApiSdk.reimburseClaim(\"clm_010\");\n\n  console.log(data);\n})();\n"
+    }
+  },
+  "methodResponses": {
+    "/categories": {
+      "get": "{  }",
+      "post": "{  }"
+    },
+    "/categories/{categoryId}": {
+      "get": "{  }",
+      "patch": "{  }"
+    },
+    "/expenses": {
+      "get": "{  }",
+      "post": "{  }"
+    },
+    "/expenses/{expenseId}": {
+      "get": "{  }",
+      "patch": "{  }",
+      "delete": "'test-value'"
+    },
+    "/expenses/{expenseId}/receipts": {
+      "get": "{  }",
+      "post": "{  }"
+    },
+    "/expenses/{expenseId}/receipts/{receiptId}": {
+      "delete": "{  }"
+    },
+    "/claims": {
+      "get": "{  }",
+      "post": "{  }"
+    },
+    "/claims/{claimId}": {
+      "get": "{  }",
+      "patch": "{  }",
+      "delete": "'test-value'"
+    },
+    "/claims/{claimId}/submit": {
+      "post": "{  }"
+    },
+    "/claims/{claimId}/approve": {
+      "post": "{  }"
+    },
+    "/claims/{claimId}/reject": {
+      "post": "{  }"
+    },
+    "/claims/{claimId}/reimburse": {
+      "post": "{  }"
+    }
+  },
+  "example": "import { ExpenseTrackerApiSdk } from 'expense-tracker-api-sdk';\n\n(async () => {\n  const expenseTrackerApiSdk = new ExpenseTrackerApiSdk({\n\ttoken: 'YOUR_TOKEN',\n});\n\n  const data = await expenseTrackerApiSdk.expenseTrackerApiSdk.listCategories({\n      includeRetired: \"false\",\n  });\n\n  console.log(data);\n})();\n",
+  "authentication": {
+    "bearer": {
+      "constructor": "const sdk = new ExpenseTrackerApiSdk({ token: 'YOUR_TOKEN' });",
+      "setter": "const sdk = new ExpenseTrackerApiSdk();\nsdk.token = 'YOUR_TOKEN';"
+    }
+  }
+}

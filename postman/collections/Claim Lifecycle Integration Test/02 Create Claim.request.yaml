@@ -1,0 +1,38 @@
+$kind: http-request
+name: Create Claim
+order: 2000
+method: POST
+url: '{{baseUrl}}/claims'
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "title": "September 2026 - Client Lunch",
+      "expenseIds": ["{{expenseId}}"]
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test("Claim created with status 201", function () {
+          pm.response.to.have.status(201);
+      });
+
+      pm.test("Response has claim ID", function () {
+          const body = pm.response.json();
+          pm.expect(body).to.have.property("id");
+          pm.collectionVariables.set("claimId", body.id);
+      });
+
+      pm.test("Claim status is draft", function () {
+          const body = pm.response.json();
+          pm.expect(body.status).to.eql("draft");
+      });
+
+      pm.test("Claim contains the expense", function () {
+          const body = pm.response.json();
+          pm.expect(body.expenseIds).to.include(pm.collectionVariables.get("expenseId"));
+      });

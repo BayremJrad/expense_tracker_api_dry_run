@@ -1,0 +1,14 @@
+$kind: http-example
+name: '204 No Content - Deleted'
+request:
+  method: DELETE
+  url: '{{baseUrl}}/expenses/exp_001/receipts/rec_001'
+  headers:
+    - key: Authorization
+      value: 'Bearer {{authToken}}'
+response:
+  statusCode: 204
+  statusText: No Content
+  body:
+    type: json
+    content: ''

@@ -1,0 +1,11 @@
+$kind: collection
+name: Expenses
+description: |-
+  Core resource for recording and managing individual expenses.
+  
+  - Employees record, amend, and delete their own expenses (BR-01, BR-02, BR-05)
+  - Expenses can be filtered by date range, category, and claimed status (BR-03)
+  - Amount must be > 0 (BR-16); date must not be in the future (BR-17)
+  - Expenses in a submitted/approved/reimbursed claim cannot be amended or deleted (BR-25)
+  - Non-EUR expenses store both original amount and EUR equivalent (BR-28)
+order: 2000

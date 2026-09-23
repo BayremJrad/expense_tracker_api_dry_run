@@ -1,0 +1,17 @@
+$kind: http-request
+name: Submit Claim
+order: 3000
+method: POST
+url: '{{baseUrl}}/claims/{{claimId}}/submit'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test("Claim submitted with status 200", function () {
+          pm.response.to.have.status(200);
+      });
+
+      pm.test("Claim status is submitted", function () {
+          const body = pm.response.json();
+          pm.expect(body.status).to.eql("submitted");
+      });

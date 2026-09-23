@@ -1,0 +1,11 @@
+workspace:
+  id: b489428e-e5bb-4e7b-87e3-30fb133eb84d
+cloudResources:
+  collections:
+    ../postman/collections/Expense Tracker API: 53785387-12b3d0fd-27ca-4399-aa2f-946eba5ac718
+localResources:
+  specs:
+    - ../postman/specs/Expense Tracker API Contract/Expense Tracker API Contract.yaml
+resourceNameMappings:
+  specs:
+    - ../postman/specs/Expense Tracker API Contract/Expense Tracker API Contract.yaml: Expense Tracker API Contract

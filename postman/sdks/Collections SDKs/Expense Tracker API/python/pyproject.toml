@@ -1,0 +1,14 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "expense_tracker_api_sdk"
+version = "1.0.0"
+description = """API for Northbeam Consulting's Expense Tracker service. Allows employees to record expenses, attach receipts, group them into claims, and submit for approval. Approvers can review and approve/reject claims. Finance can manage categories and mark claims as reimbursed.\n\n**Roles:**\n- **Employee** – records expenses, attaches receipts, creates and submits claims\n- **Approver** – reviews and approves/rejects submitted claims\n- **Finance** – manages categories, marks claims as reimbursed, runs reports\n\n**Base URL:** `{{baseUrl}}`\n\n**Authentication:** Bearer token required on all endpoints (NFR-01)."""
+readme = "PyPI_README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "requests>=2.31.0",
+    "pydantic>=2.0.0,<3.0.0"
+]

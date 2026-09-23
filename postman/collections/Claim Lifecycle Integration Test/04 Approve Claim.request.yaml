@@ -1,0 +1,28 @@
+$kind: http-request
+name: Approve Claim
+order: 4000
+method: POST
+url: '{{baseUrl}}/claims/{{claimId}}/approve'
+auth:
+  type: bearer
+  credentials:
+    - key: token
+      value: '{{approverToken}}'
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      pm.test("Claim approved with status 200", function () {
+          pm.response.to.have.status(200);
+      });
+
+      pm.test("Claim status is approved", function () {
+          const body = pm.response.json();
+          pm.expect(body.status).to.eql("approved");
+      });
+
+      pm.test("Approval recorded with actor and timestamp", function () {
+          const body = pm.response.json();
+          pm.expect(body).to.have.property("approvedBy");
+          pm.expect(body).to.have.property("approvedAt");
+      });

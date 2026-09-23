@@ -1,0 +1,31 @@
+$kind: http-example
+name: '200 OK - Receipts list'
+request:
+  method: GET
+  url: '{{baseUrl}}/expenses/exp_001/receipts'
+  headers:
+    - key: Authorization
+      value: 'Bearer {{authToken}}'
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    - key: Content-Type
+      value: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "data": [
+          {
+            "id": "rec_001",
+            "expenseId": "exp_001",
+            "filename": "train_receipt.jpg",
+            "mimeType": "image/jpeg",
+            "sizeBytes": 204800,
+            "uploadedAt": "2026-09-10T18:35:00Z",
+            "uploadedBy": "usr_123"
+          }
+        ],
+        "total": 1
+      }

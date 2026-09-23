@@ -1,0 +1,27 @@
+$kind: http-request
+name: Update Expense
+order: 4000
+description: |-
+  Amends an existing expense. Only the owner may update it (BR-02, BR-05).
+  
+  **Business rules:**
+  - Cannot amend an expense that is part of a submitted, approved, or reimbursed claim (BR-25)
+  - Amount must remain greater than zero (BR-16)
+  - Date incurred must not be in the future (BR-17)
+method: PATCH
+url: '{{baseUrl}}/expenses/:expenseId'
+headers:
+  - key: Content-Type
+    value: application/json
+pathVariables:
+  - key: expenseId
+    value: exp_001
+    description: The unique identifier of the expense to update.
+body:
+  type: json
+  content: |-
+    {
+      "description": "Train to Manchester client site (return)",
+      "amount": 135.00
+    }
+examples: './.resources/Update Expense.resources/examples/'

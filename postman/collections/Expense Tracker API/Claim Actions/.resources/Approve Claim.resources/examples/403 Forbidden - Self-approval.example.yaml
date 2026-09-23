@@ -1,0 +1,24 @@
+$kind: http-example
+name: '403 Forbidden - Self-approval'
+request:
+  method: POST
+  url: '{{baseUrl}}/claims/clm_010/approve'
+  headers:
+    - key: Authorization
+      value: 'Bearer {{authToken}}'
+response:
+  statusCode: 403
+  statusText: Forbidden
+  headers:
+    - key: Content-Type
+      value: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "error": {
+          "code": "SELF_APPROVAL_NOT_ALLOWED",
+          "rule": "BR-26",
+          "message": "You cannot approve a claim that you submitted."
+        }
+      }

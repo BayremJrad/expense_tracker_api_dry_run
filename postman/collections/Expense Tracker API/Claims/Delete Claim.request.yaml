@@ -1,0 +1,17 @@
+$kind: http-request
+name: Delete Claim
+order: 5000
+description: |-
+  Deletes a claim in draft status. Only the claim owner may delete it.
+  
+  **Business rules:**
+  - Only draft claims can be deleted
+  - Reimbursed claims are final and cannot be deleted (BR-27)
+  - Deleting a claim releases its expenses back to unclaimed status
+method: DELETE
+url: '{{baseUrl}}/claims/:claimId'
+pathVariables:
+  - key: claimId
+    value: clm_001
+    description: The unique identifier of the claim to delete.
+examples: './.resources/Delete Claim.resources/examples/'

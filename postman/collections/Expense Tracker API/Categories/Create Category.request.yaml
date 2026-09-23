@@ -1,0 +1,24 @@
+$kind: http-request
+name: Create Category
+order: 3000
+description: |-
+  Creates a new expense category. **Finance role required** (BR-07, BR-08).
+  
+  The `receiptThreshold` is the amount above which a receipt becomes mandatory.
+  Set `requiresReceiptAlways: true` to mandate a receipt at any amount.
+  Set `requiresClientReference: true` for categories like Client Entertainment (BR-20).
+method: POST
+url: '{{baseUrl}}/categories'
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "name": "Client Entertainment",
+      "receiptThreshold": 0.01,
+      "requiresReceiptAlways": true,
+      "requiresClientReference": true
+    }
+examples: './.resources/Create Category.resources/examples/'

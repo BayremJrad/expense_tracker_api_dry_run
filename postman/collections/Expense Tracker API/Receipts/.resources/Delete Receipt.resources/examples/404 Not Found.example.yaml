@@ -1,0 +1,23 @@
+$kind: http-example
+name: '404 Not Found'
+request:
+  method: DELETE
+  url: '{{baseUrl}}/expenses/exp_001/receipts/rec_999'
+  headers:
+    - key: Authorization
+      value: 'Bearer {{authToken}}'
+response:
+  statusCode: 404
+  statusText: Not Found
+  headers:
+    - key: Content-Type
+      value: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "error": {
+          "code": "RECEIPT_NOT_FOUND",
+          "message": "No receipt found with id 'rec_999' on expense 'exp_001'."
+        }
+      }

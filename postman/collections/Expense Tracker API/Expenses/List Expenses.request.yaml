@@ -1,0 +1,37 @@
+$kind: http-request
+name: List Expenses
+order: 1000
+description: |-
+  Returns a paginated list of expenses for the authenticated employee.
+  Finance may retrieve expenses across all employees for reporting (BR-14).
+  
+  Supports filtering by date range, category, and claimed status (BR-03).
+  Results are paginated (NFR-05).
+method: GET
+url: '{{baseUrl}}/expenses'
+queryParams:
+  - key: dateFrom
+    value: '2026-09-01'
+    description: 'Filter expenses incurred on or after this date (ISO 8601).'
+    disabled: true
+  - key: dateTo
+    value: '2026-09-30'
+    description: 'Filter expenses incurred on or before this date (ISO 8601).'
+    disabled: true
+  - key: categoryId
+    value: cat_01
+    description: 'Filter by category ID.'
+    disabled: true
+  - key: claimed
+    value: 'false'
+    description: 'Filter by whether the expense has been added to a claim. true | false'
+    disabled: true
+  - key: page
+    value: '1'
+    description: 'Page number (1-based).'
+    disabled: true
+  - key: pageSize
+    value: '20'
+    description: 'Number of results per page. Max 100.'
+    disabled: true
+examples: './.resources/List Expenses.resources/examples/'

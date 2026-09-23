@@ -1,0 +1,2161 @@
+openapi: 3.0.0
+info:
+  title: Expense Tracker API Contract
+  version: 1.0.0
+  description: |-
+    API for Northbeam Consulting's Expense Tracker service. Allows employees to record expenses, attach receipts, group them into claims, and submit for approval. Approvers can review and approve/reject claims. Finance can manage categories and mark claims as reimbursed.
+
+    **Roles:**
+    - **Employee** – records expenses, attaches receipts, creates and submits claims
+    - **Approver** – reviews and approves/rejects submitted claims
+    - **Finance** – manages categories, marks claims as reimbursed, runs reports
+
+    **Base URL:** `{{baseUrl}}`
+
+    **Authentication:** Bearer token required on all endpoints (NFR-01).
+servers:
+  - url: '{{baseUrl}}'
+paths:
+  /categories:
+    get:
+      summary: List Categories
+      parameters:
+        - name: includeRetired
+          in: query
+          description: Set to true (Finance only) to include retired categories in the response.
+          schema:
+            type: boolean
+          example: false
+      responses:
+        '200':
+          description: 200 OK - Active categories
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        name:
+                          type: string
+                        receiptThreshold:
+                          type: integer
+                        requiresReceiptAlways:
+                          type: boolean
+                        requiresClientReference:
+                          type: boolean
+                        active:
+                          type: boolean
+                  total:
+                    type: integer
+              example:
+                data:
+                  - id: cat_01
+                    name: Travel
+                    receiptThreshold: 50
+                    requiresReceiptAlways: false
+                    requiresClientReference: false
+                    active: true
+                  - id: cat_02
+                    name: Accommodation
+                    receiptThreshold: 0.01
+                    requiresReceiptAlways: true
+                    requiresClientReference: false
+                    active: true
+                  - id: cat_03
+                    name: Meals
+                    receiptThreshold: 25
+                    requiresReceiptAlways: false
+                    requiresClientReference: false
+                    active: true
+                  - id: cat_04
+                    name: Software
+                    receiptThreshold: 10
+                    requiresReceiptAlways: false
+                    requiresClientReference: false
+                    active: true
+                  - id: cat_05
+                    name: Client Entertainment
+                    receiptThreshold: 0.01
+                    requiresReceiptAlways: true
+                    requiresClientReference: true
+                    active: true
+                total: 5
+        '401':
+          description: 401 Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                      message:
+                        type: string
+              example:
+                error:
+                  code: UNAUTHORIZED
+                  message: Authentication is required. Please provide a valid Bearer token.
+      tags:
+        - Categories
+      description: |-
+        Returns all active categories available for use on new expenses.
+        Finance may also see retired categories by passing `includeRetired=true`.
+
+        **BR-06** – Any authenticated user can retrieve the category list.
+        **BR-08** – Read-only for employees and approvers.
+    post:
+      summary: Create Category
+      responses:
+        '201':
+          description: 201 Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  receiptThreshold:
+                    type: number
+                  requiresReceiptAlways:
+                    type: boolean
+                  requiresClientReference:
+                    type: boolean
+                  active:
+                    type: boolean
+                  createdAt:
+                    type: string
+                    format: date-time
+                  updatedAt:
+                    type: string
+                    format: date-time
+              example:
+                id: cat_05
+                name: Client Entertainment
+                receiptThreshold: 0.01
+                requiresReceiptAlways: true
+                requiresClientReference: true
+                active: true
+                createdAt: '2026-09-23T10:00:00Z'
+                updatedAt: '2026-09-23T10:00:00Z'
+        '403':
+          description: 403 Forbidden - Not Finance
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                      rule:
+                        type: string
+                      message:
+                        type: string
+              example:
+                error:
+                  code: FORBIDDEN
+                  rule: BR-08
+                  message: Only Finance may modify the category list.
+      tags:
+        - Categories
+      description: |-
+        Creates a new expense category. **Finance role required** (BR-07, BR-08).
+
+        The `receiptThreshold` is the amount above which a receipt becomes mandatory.
+        Set `requiresReceiptAlways: true` to mandate a receipt at any amount.
+        Set `requiresClientReference: true` for categories like Client Entertainment (BR-20).
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                receiptThreshold:
+                  type: number
+                requiresReceiptAlways:
+                  type: boolean
+                requiresClientReference:
+                  type: boolean
+            example:
+              name: Client Entertainment
+              receiptThreshold: 0.01
+              requiresReceiptAlways: true
+              requiresClientReference: true
+  '/categories/{categoryId}':
+    get:
+      summary: Get Category
+      responses:
+        '200':
+          description: 200 OK - Category found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  receiptThreshold:
+                    type: integer
+                  requiresReceiptAlways:
+                    type: boolean
+                  requiresClientReference:
+                    type: boolean
+                  active:
+                    type: boolean
+                  createdAt:
+                    type: string
+                    format: date-time
+                  updatedAt:
+                    type: string
+                    format: date-time
+              example:
+                id: cat_01
+                name: Travel
+                receiptThreshold: 50
+                requiresReceiptAlways: false
+                requiresClientReference: false
+                active: true
+                createdAt: '2025-01-01T00:00:00Z'
+                updatedAt: '2025-01-01T00:00:00Z'
+        '404':
+          description: 404 Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                      message:
+                        type: string
+              example:
+                error:
+                  code: CATEGORY_NOT_FOUND
+                  message: No category found with id 'cat_999'.
+      tags:
+        - Categories
+      description: 'Returns a single category by its ID, including whether it is active or retired.'
+    parameters:
+      - name: categoryId
+        in: path
+        required: true
+        description: The unique identifier of the category to update.
+        schema:
+          type: string
+        example: cat_01
+    patch:
+      summary: Update Category
+      responses:
+        '200':
+          description: 200 OK - Category retired
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  receiptThreshold:
+                    type: integer
+                  requiresReceiptAlways:
+                    type: boolean
+                  requiresClientReference:
+                    type: boolean
+                  active:
+                    type: boolean
+                  retiredAt:
+                    type: string
+                    format: date-time
+                  updatedAt:
+                    type: string
+                    format: date-time
+              examples:
+                200 OK - Category retired:
+                  value:
+                    id: cat_04
+                    name: Software
+                    receiptThreshold: 10
+                    requiresReceiptAlways: false
+                    requiresClientReference: false
+                    active: false
+                    retiredAt: '2026-09-23T10:05:00Z'
+                    updatedAt: '2026-09-23T10:05:00Z'
+                200 OK - Updated:
+                  value:
+                    id: cat_01
+                    name: Travel
+                    receiptThreshold: 75
+                    requiresReceiptAlways: false
+                    requiresClientReference: false
+                    active: true
+                    createdAt: '2025-01-01T00:00:00Z'
+                    updatedAt: '2026-09-23T10:05:00Z'
+      tags:
+        - Categories
+      description: |-
+        Updates an existing category's name, receipt threshold, or client reference requirement.
+        **Finance role required** (BR-07, BR-08).
+
+        Retiring a category (setting `active: false`) does not affect historic expenses (BR-30).
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                receiptThreshold:
+                  type: integer
+            example:
+              receiptThreshold: 75
+  /expenses:
+    get:
+      summary: List Expenses
+      parameters:
+        - name: dateFrom
+          in: query
+          description: Filter expenses incurred on or after this date (ISO 8601).
+          schema:
+            type: string
+          example: '2026-09-01'
+        - name: dateTo
+          in: query
+          description: Filter expenses incurred on or before this date (ISO 8601).
+          schema:
+            type: string
+          example: '2026-09-30'
+        - name: categoryId
+          in: query
+          description: Filter by category ID.
+          schema:
+            type: string
+          example: cat_01
+        - name: claimed
+          in: query
+          description: Filter by whether the expense has been added to a claim. true | false
+          schema:
+            type: boolean
+          example: false
+        - name: page
+          in: query
+          description: Page number (1-based).
+          schema:
+            type: integer
+          example: 1
+        - name: pageSize
+          in: query
+          description: Number of results per page. Max 100.
+          schema:
+            type: integer
+          example: 20
+      responses:
+        '200':
+          description: 200 OK - Expenses list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        amount:
+                          type: number
+                        currency:
+                          type: string
+                        amountEur:
+                          type: number
+                        dateIncurred:
+                          type: string
+                          format: date
+                        category:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                            name:
+                              type: string
+                        description:
+                          type: string
+                        paymentMethod:
+                          type: string
+                        clientReference:
+                          nullable: true
+                        receiptCount:
+                          type: integer
+                        claimId:
+                          nullable: true
+                        ownerId:
+                          type: string
+                        recordedAt:
+                          type: string
+                          format: date-time
+                  pagination:
+                    type: object
+                    properties:
+                      page:
+                        type: integer
+                      pageSize:
+                        type: integer
+                      total:
+                        type: integer
+                      totalPages:
+                        type: integer
+              examples:
+                200 OK - Expenses list:
+                  value:
+                    data:
+                      - id: exp_001
+                        amount: 120.5
+                        currency: GBP
+                        amountEur: 142.19
+                        dateIncurred: '2026-09-10'
+                        category:
+                          id: cat_01
+                          name: Travel
+                        description: Train to Manchester client site
+                        paymentMethod: personal
+                        clientReference: null
+                        receiptCount: 1
+                        claimId: null
+                        ownerId: usr_123
+                        recordedAt: '2026-09-10T18:30:00Z'
+                      - id: exp_002
+                        amount: 45
+                        currency: EUR
+                        amountEur: 45
+                        dateIncurred: '2026-09-11'
+                        category:
+                          id: cat_03
+                          name: Meals
+                        description: Team lunch during client workshop
+                        paymentMethod: personal
+                        clientReference: CLIENT-007
+                        receiptCount: 1
+                        claimId: null
+                        ownerId: usr_123
+                        recordedAt: '2026-09-11T13:00:00Z'
+                    pagination:
+                      page: 1
+                      pageSize: 20
+                      total: 2
+                      totalPages: 1
+                200 OK - Filtered unclaimed expenses:
+                  value:
+                    data:
+                      - id: exp_001
+                        amount: 120.5
+                        currency: GBP
+                        amountEur: 142.19
+                        dateIncurred: '2026-09-10'
+                        category:
+                          id: cat_01
+                          name: Travel
+                        description: Train to Manchester client site
+                        paymentMethod: personal
+                        clientReference: null
+                        receiptCount: 1
+                        claimId: null
+                        ownerId: usr_123
+                        recordedAt: '2026-09-10T18:30:00Z'
+                    pagination:
+                      page: 1
+                      pageSize: 20
+                      total: 1
+                      totalPages: 1
+      tags:
+        - Expenses
+      description: |-
+        Returns a paginated list of expenses for the authenticated employee.
+        Finance may retrieve expenses across all employees for reporting (BR-14).
+
+        Supports filtering by date range, category, and claimed status (BR-03).
+        Results are paginated (NFR-05).
+    post:
+      summary: Create Expense
+      responses:
+        '201':
+          description: 201 Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  amount:
+                    type: number
+                  currency:
+                    type: string
+                  amountEur:
+                    type: number
+                  dateIncurred:
+                    type: string
+                    format: date
+                  category:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      name:
+                        type: string
+                  description:
+                    type: string
+                  paymentMethod:
+                    type: string
+                  clientReference:
+                    nullable: true
+                  receiptCount:
+                    type: integer
+                  claimId:
+                    nullable: true
+                  ownerId:
+                    type: string
+                  recordedAt:
+                    type: string
+                    format: date-time
+              example:
+                id: exp_001
+                amount: 120.5
+                currency: GBP
+                amountEur: 142.19
+                dateIncurred: '2026-09-10'
+                category:
+                  id: cat_01
+                  name: Travel
+                description: Train to Manchester client site
+                paymentMethod: personal
+                clientReference: null
+                receiptCount: 0
+                claimId: null
+                ownerId: usr_123
+                recordedAt: '2026-09-10T18:30:00Z'
+        '422':
+          description: 422 Unprocessable - Future date
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                      rule:
+                        type: string
+                      message:
+                        type: string
+                      field:
+                        type: string
+              examples:
+                422 Unprocessable - Future date:
+                  value:
+                    error:
+                      code: VALIDATION_ERROR
+                      rule: BR-17
+                      message: The date incurred must not be in the future.
+                      field: dateIncurred
+                422 Unprocessable - Zero amount:
+                  value:
+                    error:
+                      code: VALIDATION_ERROR
+                      rule: BR-16
+                      message: Expense amount must be greater than zero.
+                      field: amount
+      tags:
+        - Expenses
+      description: |-
+        Records a new expense for the authenticated employee (BR-01).
+
+        **Business rules:**
+        - Amount must be greater than zero (BR-16)
+        - Date incurred must not be in the future (BR-17)
+        - Category must be an active category (BR-06)
+        - For non-EUR currencies, the EUR equivalent is calculated using the exchange rate on the date incurred (BR-28)
+        - Client Entertainment requires a client reference (BR-20)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                amount:
+                  type: number
+                currency:
+                  type: string
+                dateIncurred:
+                  type: string
+                  format: date
+                categoryId:
+                  type: string
+                description:
+                  type: string
+                paymentMethod:
+                  type: string
+                clientReference:
+                  nullable: true
+            example:
+              amount: 120.5
+              currency: GBP
+              dateIncurred: '2026-09-10'
+              categoryId: cat_01
+              description: Train to Manchester client site
+              paymentMethod: personal
+              clientReference: null
+  '/expenses/{expenseId}':
+    get:
+      summary: Get Expense
+      responses:
+        '200':
+          description: 200 OK - Expense found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  amount:
+                    type: number
+                  currency:
+                    type: string
+                  amountEur:
+                    type: number
+                  dateIncurred:
+                    type: string
+                    format: date
+                  category:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      name:
+                        type: string
+                  description:
+                    type: string
+                  paymentMethod:
+                    type: string
+                  clientReference:
+                    nullable: true
+                  receipts:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        filename:
+                          type: string
+                        mimeType:
+                          type: string
+                        sizeBytes:
+                          type: integer
+                        uploadedAt:
+                          type: string
+                          format: date-time
+                  claimId:
+                    nullable: true
+                  ownerId:
+                    type: string
+                  recordedAt:
+                    type: string
+                    format: date-time
+              example:
+                id: exp_001
+                amount: 120.5
+                currency: GBP
+                amountEur: 142.19
+                dateIncurred: '2026-09-10'
+                category:
+                  id: cat_01
+                  name: Travel
+                description: Train to Manchester client site
+                paymentMethod: personal
+                clientReference: null
+                receipts:
+                  - id: rec_001
+                    filename: train_receipt.jpg
+                    mimeType: image/jpeg
+                    sizeBytes: 204800
+                    uploadedAt: '2026-09-10T18:35:00Z'
+                claimId: null
+                ownerId: usr_123
+                recordedAt: '2026-09-10T18:30:00Z'
+        '403':
+          description: 403 Forbidden - Not owner
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                      rule:
+                        type: string
+                      message:
+                        type: string
+              example:
+                error:
+                  code: FORBIDDEN
+                  rule: BR-05
+                  message: You do not have permission to access this expense.
+      tags:
+        - Expenses
+      description: |-
+        Returns a single expense by ID. Employees can only retrieve their own expenses (BR-05).
+        Finance can retrieve any expense.
+    parameters:
+      - name: expenseId
+        in: path
+        required: true
+        description: The unique identifier of the expense to delete.
+        schema:
+          type: string
+        example: exp_001
+    patch:
+      summary: Update Expense
+      responses:
+        '200':
+          description: 200 OK - Updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  amount:
+                    type: integer
+                  currency:
+                    type: string
+                  amountEur:
+                    type: number
+                  dateIncurred:
+                    type: string
+                    format: date
+                  category:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      name:
+                        type: string
+                  description:
+                    type: string
+                  paymentMethod:
+                    type: string
+                  clientReference:
+                    nullable: true
+                  receiptCount:
+                    type: integer
+                  claimId:
+                    nullable: true
+                  ownerId:
+                    type: string
+                  recordedAt:
+                    type: string
+                    format: date-time
+                  updatedAt:
+                    type: string
+                    format: date-time
+              example:
+                id: exp_001
+                amount: 135
+                currency: GBP
+                amountEur: 159.57
+                dateIncurred: '2026-09-10'
+                category:
+                  id: cat_01
+                  name: Travel
+                description: Train to Manchester client site (return)
+                paymentMethod: personal
+                clientReference: null
+                receiptCount: 1
+                claimId: null
+                ownerId: usr_123
+                recordedAt: '2026-09-10T18:30:00Z'
+                updatedAt: '2026-09-23T09:00:00Z'
+        '409':
+          description: 409 Conflict - Expense in submitted claim
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                      rule:
+                        type: string
+                      message:
+                        type: string
+              example:
+                error:
+                  code: EXPENSE_NOT_EDITABLE
+                  rule: BR-25
+                  message: This expense belongs to claim 'clm_010' which is in 'submitted' status and cannot be amended.
+      tags:
+        - Expenses
+      description: |-
+        Amends an existing expense. Only the owner may update it (BR-02, BR-05).
+
+        **Business rules:**
+        - Cannot amend an expense that is part of a submitted, approved, or reimbursed claim (BR-25)
+        - Amount must remain greater than zero (BR-16)
+        - Date incurred must not be in the future (BR-17)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                description:
+                  type: string
+                amount:
+                  type: integer
+            example:
+              description: Train to Manchester client site (return)
+              amount: 135
+    delete:
+      summary: Delete Expense
+      responses:
+        '204':
+          description: 204 No Content - Deleted
+        '409':
+          description: 409 Conflict - Expense in approved claim
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                      rule:
+                        type: string
+                      message:
+                        type: string
+              example:
+                error:
+                  code: EXPENSE_NOT_EDITABLE
+                  rule: BR-25
+                  message: This expense belongs to claim 'clm_010' which is in 'approved' status and cannot be deleted.
+      tags:
+        - Expenses
+      description: |-
+        Deletes an expense. Only the owner may delete it (BR-02, BR-05).
+
+        **Business rules:**
+        - Cannot delete an expense that is part of a submitted, approved, or reimbursed claim (BR-25)
+  '/expenses/{expenseId}/receipts':
+    get:
+      summary: List Receipts
+      responses:
+        '200':
+          description: 200 OK - No receipts
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items: {}
+                  total:
+                    type: integer
+              examples:
+                200 OK - No receipts:
+                  value:
+                    data: []
+                    total: 0
+                200 OK - Receipts list:
+                  value:
+                    data:
+                      - id: rec_001
+                        expenseId: exp_001
+                        filename: train_receipt.jpg
+                        mimeType: image/jpeg
+                        sizeBytes: 204800
+                        uploadedAt: '2026-09-10T18:35:00Z'
+                        uploadedBy: usr_123
+                    total: 1
+      tags:
+        - Receipts
+      description: |-
+        Returns all receipt attachments for a given expense.
+        Only the expense owner (or Finance) may access receipts (BR-05).
+
+        **NFR-07** – Receipts may be JPEG, PNG, or PDF, up to 10 MB each. Max 10 per expense.
+    parameters:
+      - name: expenseId
+        in: path
+        required: true
+        description: The unique identifier of the expense.
+        schema:
+          type: string
+        example: exp_001
+    post:
+      summary: Upload Receipt
+      responses:
+        '201':
+          description: 201 Created - Receipt uploaded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  expenseId:
+                    type: string
+                  filename:
+                    type: string
+                  mimeType:
+                    type: string
+                  sizeBytes:
+                    type: integer
+                  uploadedAt:
+                    type: string
+                    format: date-time
+                  uploadedBy:
+                    type: string
+              example:
+                id: rec_001
+                expenseId: exp_001
+                filename: train_receipt.jpg
+                mimeType: image/jpeg
+                sizeBytes: 204800
+                uploadedAt: '2026-09-10T18:35:00Z'
+                uploadedBy: usr_123
+        '415':
+          description: 415 Unsupported Media Type
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                      rule:
+                        type: string
+                      message:
+                        type: string
+              example:
+                error:
+                  code: UNSUPPORTED_FILE_TYPE
+                  rule: NFR-07
+                  message: 'Unsupported file type. Accepted formats are JPEG, PNG, and PDF.'
+        '422':
+          description: 422 Unprocessable - File too large
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                      rule:
+                        type: string
+                      message:
+                        type: string
+              examples:
+                422 Unprocessable - File too large:
+                  value:
+                    error:
+                      code: FILE_TOO_LARGE
+                      rule: NFR-07
+                      message: Receipt file exceeds the maximum allowed size of 10 MB.
+                422 Unprocessable - Max receipts reached:
+                  value:
+                    error:
+                      code: MAX_RECEIPTS_REACHED
+                      rule: NFR-07
+                      message: 'This expense already has 10 receipts attached, which is the maximum allowed.'
+      tags:
+        - Receipts
+      description: |-
+        Attaches a receipt image to an expense (BR-04).
+
+        **Business rules:**
+        - Accepted formats: JPEG, PNG, PDF (NFR-07)
+        - Maximum file size: 10 MB per receipt (NFR-07)
+        - Maximum 10 receipts per expense (NFR-07)
+        - A receipt is mandatory when the expense amount exceeds the category receipt threshold (BR-19)
+        - Client Entertainment always requires a receipt (BR-20)
+        - Only the expense owner may attach receipts (BR-05)
+  '/expenses/{expenseId}/receipts/{receiptId}':
+    delete:
+      summary: Delete Receipt
+      responses:
+        '204':
+          description: 204 No Content - Deleted
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: 404 Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                      message:
+                        type: string
+              example:
+                error:
+                  code: RECEIPT_NOT_FOUND
+                  message: No receipt found with id 'rec_999' on expense 'exp_001'.
+        '409':
+          description: 409 Conflict - Claim is submitted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                      rule:
+                        type: string
+                      message:
+                        type: string
+              example:
+                error:
+                  code: EXPENSE_NOT_EDITABLE
+                  rule: BR-25
+                  message: Receipts cannot be removed from an expense that is part of a submitted claim.
+      tags:
+        - Receipts
+      description: |-
+        Removes a receipt attachment from an expense (BR-04).
+
+        **Business rules:**
+        - Only the expense owner may remove receipts (BR-05)
+        - Cannot remove a receipt from an expense in a submitted, approved, or reimbursed claim (BR-25)
+    parameters:
+      - name: expenseId
+        in: path
+        required: true
+        description: The unique identifier of the expense.
+        schema:
+          type: string
+        example: exp_001
+      - name: receiptId
+        in: path
+        required: true
+        description: The unique identifier of the receipt to delete.
+        schema:
+          type: string
+        example: rec_001
+  /claims:
+    get:
+      summary: List Claims
+      parameters:
+        - name: status
+          in: query
+          description: 'Filter by claim status: draft | submitted | approved | rejected | reimbursed'
+          schema:
+            type: string
+          example: submitted
+        - name: page
+          in: query
+          description: Page number (1-based).
+          schema:
+            type: integer
+          example: 1
+        - name: pageSize
+          in: query
+          description: Number of results per page. Max 100.
+          schema:
+            type: integer
+          example: 20
+      responses:
+        '200':
+          description: 200 OK - Claims list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        title:
+                          type: string
+                        status:
+                          type: string
+                        totalEur:
+                          type: number
+                        expenseCount:
+                          type: integer
+                        ownerId:
+                          type: string
+                        createdAt:
+                          type: string
+                          format: date-time
+                        submittedAt:
+                          nullable: true
+                        decision:
+                          nullable: true
+                  pagination:
+                    type: object
+                    properties:
+                      page:
+                        type: integer
+                      pageSize:
+                        type: integer
+                      total:
+                        type: integer
+                      totalPages:
+                        type: integer
+              examples:
+                200 OK - Claims list:
+                  value:
+                    data:
+                      - id: clm_001
+                        title: September 2026 - Client site visits
+                        status: draft
+                        totalEur: 187.19
+                        expenseCount: 2
+                        ownerId: usr_123
+                        createdAt: '2026-09-23T09:00:00Z'
+                        submittedAt: null
+                        decision: null
+                      - id: clm_002
+                        title: August 2026 - Travel expenses
+                        status: reimbursed
+                        totalEur: 430
+                        expenseCount: 5
+                        ownerId: usr_123
+                        createdAt: '2026-08-31T17:00:00Z'
+                        submittedAt: '2026-09-01T08:00:00Z'
+                        decision:
+                          decidedBy: usr_456
+                          decidedAt: '2026-09-03T10:00:00Z'
+                          outcome: approved
+                          reason: null
+                    pagination:
+                      page: 1
+                      pageSize: 20
+                      total: 2
+                      totalPages: 1
+                200 OK - Submitted claims for approver:
+                  value:
+                    data:
+                      - id: clm_010
+                        title: September 2026 - Client site visits
+                        status: submitted
+                        totalEur: 320.5
+                        expenseCount: 3
+                        ownerId: usr_789
+                        createdAt: '2026-09-20T14:00:00Z'
+                        submittedAt: '2026-09-23T08:00:00Z'
+                        decision: null
+                    pagination:
+                      page: 1
+                      pageSize: 20
+                      total: 1
+                      totalPages: 1
+      tags:
+        - Claims
+      description: |-
+        Returns a paginated list of claims.
+
+        - Employees see only their own claims (BR-10)
+        - Approvers see claims submitted to them (BR-11)
+        - Finance sees all claims (BR-14)
+
+        Supports filtering by status. Results are paginated (NFR-05).
+    post:
+      summary: Create Claim
+      responses:
+        '201':
+          description: 201 Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  title:
+                    type: string
+                  status:
+                    type: string
+                  totalEur:
+                    type: number
+                  expenseCount:
+                    type: integer
+                  ownerId:
+                    type: string
+                  createdAt:
+                    type: string
+                    format: date-time
+                  submittedAt:
+                    nullable: true
+                  decision:
+                    nullable: true
+              example:
+                id: clm_001
+                title: September 2026 - Client site visits
+                status: draft
+                totalEur: 187.19
+                expenseCount: 2
+                ownerId: usr_123
+                createdAt: '2026-09-23T09:00:00Z'
+                submittedAt: null
+                decision: null
+        '422':
+          description: 422 Unprocessable - Expense already claimed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                      rule:
+                        type: string
+                      message:
+                        type: string
+                      field:
+                        type: string
+              examples:
+                422 Unprocessable - Expense already claimed:
+                  value:
+                    error:
+                      code: EXPENSE_ALREADY_CLAIMED
+                      rule: BR-22
+                      message: Expense 'exp_005' is already part of claim 'clm_003'.
+                      field: expenseIds
+                422 Unprocessable - Expense too old:
+                  value:
+                    error:
+                      code: EXPENSE_TOO_OLD
+                      rule: BR-18
+                      message: Expense 'exp_old_001' was incurred more than 90 days ago and cannot be added to a claim.
+                      field: expenseIds
+      tags:
+        - Claims
+      description: |-
+        Creates a new claim in draft status, grouping one or more unclaimed expenses (BR-09).
+
+        **Business rules:**
+        - A claim must contain at least one expense (BR-21)
+        - Each expense may belong to at most one claim (BR-22)
+        - Expenses incurred more than 90 days ago cannot be added to a claim (BR-18)
+        - All expenses must belong to the authenticated employee
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                expenseIds:
+                  type: array
+                  items:
+                    type: string
+            example:
+              title: September 2026 - Client site visits
+              expenseIds:
+                - exp_001
+                - exp_002
+  '/claims/{claimId}':
+    get:
+      summary: Get Claim
+      responses:
+        '200':
+          description: 200 OK - Draft claim
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  title:
+                    type: string
+                  status:
+                    type: string
+                  totalEur:
+                    type: number
+                  ownerId:
+                    type: string
+                  createdAt:
+                    type: string
+                    format: date-time
+                  submittedAt:
+                    nullable: true
+                  decision:
+                    nullable: true
+                  expenses:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        amount:
+                          type: number
+                        currency:
+                          type: string
+                        amountEur:
+                          type: number
+                        dateIncurred:
+                          type: string
+                          format: date
+                        category:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                            name:
+                              type: string
+                        description:
+                          type: string
+                        paymentMethod:
+                          type: string
+                        receiptCount:
+                          type: integer
+                  statusHistory:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        status:
+                          type: string
+                        changedBy:
+                          type: string
+                        changedAt:
+                          type: string
+                          format: date-time
+              examples:
+                200 OK - Draft claim:
+                  value:
+                    id: clm_001
+                    title: September 2026 - Client site visits
+                    status: draft
+                    totalEur: 187.19
+                    ownerId: usr_123
+                    createdAt: '2026-09-23T09:00:00Z'
+                    submittedAt: null
+                    decision: null
+                    expenses:
+                      - id: exp_001
+                        amount: 120.5
+                        currency: GBP
+                        amountEur: 142.19
+                        dateIncurred: '2026-09-10'
+                        category:
+                          id: cat_01
+                          name: Travel
+                        description: Train to Manchester client site
+                        paymentMethod: personal
+                        receiptCount: 1
+                      - id: exp_002
+                        amount: 45
+                        currency: EUR
+                        amountEur: 45
+                        dateIncurred: '2026-09-11'
+                        category:
+                          id: cat_03
+                          name: Meals
+                        description: Team lunch during client workshop
+                        paymentMethod: personal
+                        receiptCount: 1
+                    statusHistory:
+                      - status: draft
+                        changedBy: usr_123
+                        changedAt: '2026-09-23T09:00:00Z'
+                200 OK - Rejected claim with reason:
+                  value:
+                    id: clm_005
+                    title: August 2026 - Travel
+                    status: draft
+                    totalEur: 95
+                    ownerId: usr_123
+                    createdAt: '2026-08-25T10:00:00Z'
+                    submittedAt: '2026-08-26T08:00:00Z'
+                    decision:
+                      decidedBy: usr_456
+                      decidedAt: '2026-08-27T09:00:00Z'
+                      outcome: rejected
+                      reason: Missing receipt for the Accommodation expense exceeding the threshold.
+                    expenses:
+                      - id: exp_010
+                        amount: 95
+                        currency: EUR
+                        amountEur: 95
+                        dateIncurred: '2026-08-20'
+                        category:
+                          id: cat_02
+                          name: Accommodation
+                        description: Hotel stay in London
+                        paymentMethod: personal
+                        receiptCount: 0
+                    statusHistory:
+                      - status: draft
+                        changedBy: usr_123
+                        changedAt: '2026-08-25T10:00:00Z'
+                      - status: submitted
+                        changedBy: usr_123
+                        changedAt: '2026-08-26T08:00:00Z'
+                      - status: rejected
+                        changedBy: usr_456
+                        changedAt: '2026-08-27T09:00:00Z'
+                      - status: draft
+                        changedBy: system
+                        changedAt: '2026-08-27T09:00:01Z'
+                        note: Returned to draft after rejection (BR-24)
+      tags:
+        - Claims
+      description: |-
+        Returns a single claim by ID, including all its expenses and receipts (BR-11).
+
+        - Employees can only see their own claims (BR-10)
+        - Approvers can see claims submitted to them (BR-11)
+        - Finance can see all claims (BR-14)
+    parameters:
+      - name: claimId
+        in: path
+        required: true
+        description: The unique identifier of the claim to delete.
+        schema:
+          type: string
+        example: clm_001
+    patch:
+      summary: Update Claim
+      responses:
+        '200':
+          description: 200 OK - Updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  title:
+                    type: string
+                  status:
+                    type: string
+                  totalEur:
+                    type: number
+                  expenseCount:
+                    type: integer
+                  ownerId:
+                    type: string
+                  createdAt:
+                    type: string
+                    format: date-time
+                  updatedAt:
+                    type: string
+                    format: date-time
+              example:
+                id: clm_001
+                title: September 2026 - Client site visits (updated)
+                status: draft
+                totalEur: 312.19
+                expenseCount: 3
+                ownerId: usr_123
+                createdAt: '2026-09-23T09:00:00Z'
+                updatedAt: '2026-09-23T10:00:00Z'
+        '409':
+          description: 409 Conflict - Claim not in draft
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                      rule:
+                        type: string
+                      message:
+                        type: string
+              example:
+                error:
+                  code: CLAIM_NOT_EDITABLE
+                  rule: BR-25
+                  message: Claim 'clm_010' is in 'submitted' status and cannot be modified.
+      tags:
+        - Claims
+      description: |-
+        Updates a claim's title or expense list while it is in draft status.
+        Only the claim owner may update it.
+
+        **Business rules:**
+        - Can only update a claim in draft status
+        - Expenses added must be unclaimed and belong to the owner (BR-22)
+        - Expenses incurred more than 90 days ago cannot be added (BR-18)
+        - A claim must retain at least one expense (BR-21)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                expenseIds:
+                  type: array
+                  items:
+                    type: string
+            example:
+              title: September 2026 - Client site visits (updated)
+              expenseIds:
+                - exp_001
+                - exp_002
+                - exp_003
+    delete:
+      summary: Delete Claim
+      responses:
+        '204':
+          description: 204 No Content - Deleted
+        '409':
+          description: 409 Conflict - Reimbursed claim is final
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                      rule:
+                        type: string
+                      message:
+                        type: string
+              example:
+                error:
+                  code: CLAIM_IS_FINAL
+                  rule: BR-27
+                  message: Claim 'clm_002' has been reimbursed and is final. It cannot be deleted.
+      tags:
+        - Claims
+      description: |-
+        Deletes a claim in draft status. Only the claim owner may delete it.
+
+        **Business rules:**
+        - Only draft claims can be deleted
+        - Reimbursed claims are final and cannot be deleted (BR-27)
+        - Deleting a claim releases its expenses back to unclaimed status
+  '/claims/{claimId}/submit':
+    post:
+      summary: Submit Claim
+      responses:
+        '200':
+          description: 200 OK - Claim submitted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  title:
+                    type: string
+                  status:
+                    type: string
+                  totalEur:
+                    type: number
+                  expenseCount:
+                    type: integer
+                  ownerId:
+                    type: string
+                  createdAt:
+                    type: string
+                    format: date-time
+                  submittedAt:
+                    type: string
+                    format: date-time
+                  decision:
+                    nullable: true
+                  statusHistory:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        status:
+                          type: string
+                        changedBy:
+                          type: string
+                        changedAt:
+                          type: string
+                          format: date-time
+              example:
+                id: clm_001
+                title: September 2026 - Client site visits
+                status: submitted
+                totalEur: 187.19
+                expenseCount: 2
+                ownerId: usr_123
+                createdAt: '2026-09-23T09:00:00Z'
+                submittedAt: '2026-09-23T10:30:00Z'
+                decision: null
+                statusHistory:
+                  - status: draft
+                    changedBy: usr_123
+                    changedAt: '2026-09-23T09:00:00Z'
+                  - status: submitted
+                    changedBy: usr_123
+                    changedAt: '2026-09-23T10:30:00Z'
+        '409':
+          description: 409 Conflict - Claim not in draft
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                      rule:
+                        type: string
+                      message:
+                        type: string
+              example:
+                error:
+                  code: INVALID_STATUS_TRANSITION
+                  rule: BR-23
+                  message: Claim 'clm_010' is already in 'submitted' status. Only draft claims can be submitted.
+        '422':
+          description: 422 Unprocessable - Client Entertainment missing client reference
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                      rule:
+                        type: string
+                      message:
+                        type: string
+                      expenseId:
+                        type: string
+              examples:
+                422 Unprocessable - Client Entertainment missing client reference:
+                  value:
+                    error:
+                      code: MISSING_CLIENT_REFERENCE
+                      rule: BR-20
+                      message: Expense 'exp_008' (Client Entertainment) requires a client reference. Please update the expense before submitting.
+                      expenseId: exp_008
+                422 Unprocessable - Missing receipt:
+                  value:
+                    error:
+                      code: MISSING_REQUIRED_RECEIPT
+                      rule: BR-19
+                      message: 'Expense ''exp_007'' (Accommodation, €95.00) requires a receipt because the amount exceeds the category threshold. Please attach a receipt before submitting.'
+                      expenseId: exp_007
+      tags:
+        - Claim Actions
+      description: |-
+        Submits a draft claim for approval, transitioning it from `draft` → `submitted` (BR-09, BR-23).
+
+        **Business rules enforced on submission:**
+        - Claim must be in draft status (BR-23)
+        - Claim must contain at least one expense (BR-21)
+        - Any expense requiring a receipt (amount > category threshold, or Client Entertainment) must have at least one receipt attached (BR-19, BR-20)
+        - No expense in the claim may be older than 90 days (BR-18)
+        - Status change is recorded with actor and timestamp (BR-29)
+    parameters:
+      - name: claimId
+        in: path
+        required: true
+        description: The unique identifier of the claim to submit.
+        schema:
+          type: string
+        example: clm_001
+  '/claims/{claimId}/approve':
+    post:
+      summary: Approve Claim
+      responses:
+        '200':
+          description: 200 OK - Claim approved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  title:
+                    type: string
+                  status:
+                    type: string
+                  totalEur:
+                    type: number
+                  expenseCount:
+                    type: integer
+                  ownerId:
+                    type: string
+                  createdAt:
+                    type: string
+                    format: date-time
+                  submittedAt:
+                    type: string
+                    format: date-time
+                  decision:
+                    type: object
+                    properties:
+                      decidedBy:
+                        type: string
+                      decidedAt:
+                        type: string
+                        format: date-time
+                      outcome:
+                        type: string
+                      reason:
+                        nullable: true
+                  statusHistory:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        status:
+                          type: string
+                        changedBy:
+                          type: string
+                        changedAt:
+                          type: string
+                          format: date-time
+              example:
+                id: clm_010
+                title: September 2026 - Client site visits
+                status: approved
+                totalEur: 320.5
+                expenseCount: 3
+                ownerId: usr_789
+                createdAt: '2026-09-20T14:00:00Z'
+                submittedAt: '2026-09-23T08:00:00Z'
+                decision:
+                  decidedBy: usr_456
+                  decidedAt: '2026-09-23T11:00:00Z'
+                  outcome: approved
+                  reason: null
+                statusHistory:
+                  - status: draft
+                    changedBy: usr_789
+                    changedAt: '2026-09-20T14:00:00Z'
+                  - status: submitted
+                    changedBy: usr_789
+                    changedAt: '2026-09-23T08:00:00Z'
+                  - status: approved
+                    changedBy: usr_456
+                    changedAt: '2026-09-23T11:00:00Z'
+        '403':
+          description: 403 Forbidden - Self-approval
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                      rule:
+                        type: string
+                      message:
+                        type: string
+              example:
+                error:
+                  code: SELF_APPROVAL_NOT_ALLOWED
+                  rule: BR-26
+                  message: You cannot approve a claim that you submitted.
+        '409':
+          description: 409 Conflict - Claim not submitted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                      rule:
+                        type: string
+                      message:
+                        type: string
+              example:
+                error:
+                  code: INVALID_STATUS_TRANSITION
+                  rule: BR-23
+                  message: Claim 'clm_001' is in 'draft' status. Only submitted claims can be approved.
+      tags:
+        - Claim Actions
+      description: |-
+        Approves a submitted claim, transitioning it from `submitted` → `approved` (BR-12, BR-23).
+        **Approver role required.**
+
+        **Business rules:**
+        - Claim must be in submitted status (BR-23)
+        - An approver cannot approve a claim they submitted themselves (BR-26)
+        - Status change is recorded with actor and timestamp (BR-29)
+    parameters:
+      - name: claimId
+        in: path
+        required: true
+        description: The unique identifier of the claim to approve.
+        schema:
+          type: string
+        example: clm_010
+  '/claims/{claimId}/reject':
+    post:
+      summary: Reject Claim
+      responses:
+        '200':
+          description: 200 OK - Claim rejected
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  title:
+                    type: string
+                  status:
+                    type: string
+                  totalEur:
+                    type: number
+                  expenseCount:
+                    type: integer
+                  ownerId:
+                    type: string
+                  createdAt:
+                    type: string
+                    format: date-time
+                  submittedAt:
+                    type: string
+                    format: date-time
+                  decision:
+                    type: object
+                    properties:
+                      decidedBy:
+                        type: string
+                      decidedAt:
+                        type: string
+                        format: date-time
+                      outcome:
+                        type: string
+                      reason:
+                        type: string
+                  statusHistory:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        status:
+                          type: string
+                        changedBy:
+                          type: string
+                        changedAt:
+                          type: string
+                          format: date-time
+              example:
+                id: clm_010
+                title: September 2026 - Client site visits
+                status: draft
+                totalEur: 320.5
+                expenseCount: 3
+                ownerId: usr_789
+                createdAt: '2026-09-20T14:00:00Z'
+                submittedAt: '2026-09-23T08:00:00Z'
+                decision:
+                  decidedBy: usr_456
+                  decidedAt: '2026-09-23T11:15:00Z'
+                  outcome: rejected
+                  reason: Missing receipt for the Accommodation expense exceeding the threshold. Please attach the hotel invoice and resubmit.
+                statusHistory:
+                  - status: draft
+                    changedBy: usr_789
+                    changedAt: '2026-09-20T14:00:00Z'
+                  - status: submitted
+                    changedBy: usr_789
+                    changedAt: '2026-09-23T08:00:00Z'
+                  - status: rejected
+                    changedBy: usr_456
+                    changedAt: '2026-09-23T11:15:00Z'
+                  - status: draft
+                    changedBy: system
+                    changedAt: '2026-09-23T11:15:01Z'
+                    note: Returned to draft after rejection (BR-24)
+        '422':
+          description: 422 Unprocessable - Missing reason
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                      rule:
+                        type: string
+                      message:
+                        type: string
+                      field:
+                        type: string
+              example:
+                error:
+                  code: VALIDATION_ERROR
+                  rule: BR-24
+                  message: A rejection reason is required.
+                  field: reason
+      tags:
+        - Claim Actions
+      description: |-
+        Rejects a submitted claim with a mandatory reason, transitioning it from `submitted` → `rejected` → `draft` (BR-12, BR-23, BR-24).
+        **Approver role required.**
+
+        **Business rules:**
+        - Claim must be in submitted status (BR-23)
+        - A rejection reason is required (BR-24)
+        - The rejected claim returns to draft so the employee can correct and resubmit (BR-24)
+        - The rejection reason is preserved on the claim (BR-24)
+        - Status change is recorded with actor and timestamp (BR-29)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reason:
+                  type: string
+            example:
+              reason: Missing receipt for the Accommodation expense exceeding the threshold. Please attach the hotel invoice and resubmit.
+    parameters:
+      - name: claimId
+        in: path
+        required: true
+        description: The unique identifier of the claim to reject.
+        schema:
+          type: string
+        example: clm_010
+  '/claims/{claimId}/reimburse':
+    post:
+      summary: Reimburse Claim
+      responses:
+        '200':
+          description: 200 OK - Claim reimbursed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  title:
+                    type: string
+                  status:
+                    type: string
+                  totalEur:
+                    type: number
+                  expenseCount:
+                    type: integer
+                  ownerId:
+                    type: string
+                  createdAt:
+                    type: string
+                    format: date-time
+                  submittedAt:
+                    type: string
+                    format: date-time
+                  decision:
+                    type: object
+                    properties:
+                      decidedBy:
+                        type: string
+                      decidedAt:
+                        type: string
+                        format: date-time
+                      outcome:
+                        type: string
+                      reason:
+                        nullable: true
+                  reimbursedat:
+                    type: string
+                    format: date-time
+                  reimbursedBy:
+                    type: string
+                  statusHistory:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        status:
+                          type: string
+                        changedBy:
+                          type: string
+                        changedAt:
+                          type: string
+                          format: date-time
+              example:
+                id: clm_010
+                title: September 2026 - Client site visits
+                status: reimbursed
+                totalEur: 320.5
+                expenseCount: 3
+                ownerId: usr_789
+                createdAt: '2026-09-20T14:00:00Z'
+                submittedAt: '2026-09-23T08:00:00Z'
+                decision:
+                  decidedBy: usr_456
+                  decidedAt: '2026-09-23T11:00:00Z'
+                  outcome: approved
+                  reason: null
+                reimbursedat: '2026-09-23T14:00:00Z'
+                reimbursedBy: usr_finance_001
+                statusHistory:
+                  - status: draft
+                    changedBy: usr_789
+                    changedAt: '2026-09-20T14:00:00Z'
+                  - status: submitted
+                    changedBy: usr_789
+                    changedAt: '2026-09-23T08:00:00Z'
+                  - status: approved
+                    changedBy: usr_456
+                    changedAt: '2026-09-23T11:00:00Z'
+                  - status: reimbursed
+                    changedBy: usr_finance_001
+                    changedAt: '2026-09-23T14:00:00Z'
+        '403':
+          description: 403 Forbidden - Not Finance
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                      message:
+                        type: string
+              example:
+                error:
+                  code: FORBIDDEN
+                  message: Only Finance may mark a claim as reimbursed.
+        '409':
+          description: 409 Conflict - Claim not approved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                      rule:
+                        type: string
+                      message:
+                        type: string
+              example:
+                error:
+                  code: INVALID_STATUS_TRANSITION
+                  rule: BR-23
+                  message: Claim 'clm_001' is in 'draft' status. Only approved claims can be marked as reimbursed.
+      tags:
+        - Claim Actions
+      description: |-
+        Marks an approved claim as reimbursed, transitioning it from `approved` → `reimbursed` (BR-13, BR-23).
+        **Finance role required.**
+
+        **Business rules:**
+        - Claim must be in approved status (BR-23)
+        - A reimbursed claim is final — it cannot be reopened, amended, or deleted (BR-27)
+        - Status change is recorded with actor and timestamp (BR-29)
+        - Note: actual payment is handled by payroll; this endpoint records that reimbursement has occurred
+    parameters:
+      - name: claimId
+        in: path
+        required: true
+        description: The unique identifier of the claim to mark as reimbursed.
+        schema:
+          type: string
+        example: clm_010
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+security:
+  - BearerAuth: []

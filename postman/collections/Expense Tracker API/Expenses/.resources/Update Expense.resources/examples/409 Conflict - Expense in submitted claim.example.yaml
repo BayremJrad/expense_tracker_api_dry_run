@@ -1,0 +1,32 @@
+$kind: http-example
+name: '409 Conflict - Expense in submitted claim'
+request:
+  method: PATCH
+  url: '{{baseUrl}}/expenses/exp_005'
+  headers:
+    - key: Authorization
+      value: 'Bearer {{authToken}}'
+    - key: Content-Type
+      value: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "description": "Updated description"
+      }
+response:
+  statusCode: 409
+  statusText: Conflict
+  headers:
+    - key: Content-Type
+      value: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "error": {
+          "code": "EXPENSE_NOT_EDITABLE",
+          "rule": "BR-25",
+          "message": "This expense belongs to claim 'clm_010' which is in 'submitted' status and cannot be amended."
+        }
+      }

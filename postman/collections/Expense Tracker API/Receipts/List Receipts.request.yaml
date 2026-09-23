@@ -1,0 +1,15 @@
+$kind: http-request
+name: List Receipts
+order: 1000
+description: |-
+  Returns all receipt attachments for a given expense.
+  Only the expense owner (or Finance) may access receipts (BR-05).
+  
+  **NFR-07** – Receipts may be JPEG, PNG, or PDF, up to 10 MB each. Max 10 per expense.
+method: GET
+url: '{{baseUrl}}/expenses/:expenseId/receipts'
+pathVariables:
+  - key: expenseId
+    value: exp_001
+    description: The unique identifier of the expense.
+examples: './.resources/List Receipts.resources/examples/'

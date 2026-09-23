@@ -1,0 +1,24 @@
+$kind: http-example
+name: '403 Forbidden - Not owner'
+request:
+  method: GET
+  url: '{{baseUrl}}/expenses/exp_999'
+  headers:
+    - key: Authorization
+      value: 'Bearer {{authToken}}'
+response:
+  statusCode: 403
+  statusText: Forbidden
+  headers:
+    - key: Content-Type
+      value: application/json
+  body:
+    type: json
+    content: |-
+      {
+        "error": {
+          "code": "FORBIDDEN",
+          "rule": "BR-05",
+          "message": "You do not have permission to access this expense."
+        }
+      }
